@@ -15,5 +15,5 @@ Access Code 2.1, [Coalition for Queens](http://www.c4q.nyc/)
 * Cards by Friday
 * Put it together by Saturday
 * To-do card: weekend
-* Layout and Bonuses: Monday - Wednesday
-* **Code complete**: Wednesday
+* Layout and Bonuses: Monday - Tuesday
+* **Code complete**: Tuesday, 6-30
