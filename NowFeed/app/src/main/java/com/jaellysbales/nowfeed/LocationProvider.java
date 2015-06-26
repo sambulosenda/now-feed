@@ -18,7 +18,7 @@ public class LocationProvider implements
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
 
-    public static final String TAG = LocationProvider.class.getSimpleName();
+    public final static String TAG = LocationProvider.class.getSimpleName();
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private LocationCallback locationCallback;
     private Context myContext;
@@ -85,7 +85,7 @@ public class LocationProvider implements
                 // Start activity that tries to resolve the error.
                 connectionResult.startResolutionForResult(activity, CONNECTION_FAILURE_RESOLUTION_REQUEST);
 
-            // Throw exception if original PendingIntent is cancelled by Google Play services.
+                // Throw exception if original PendingIntent is cancelled by Google Play services.
             } catch (IntentSender.SendIntentException e) {
                 // Log the error
                 e.printStackTrace();
