@@ -11,11 +11,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
 
         ListView cardListView = (ListView) findViewById(R.id.card_list_view);
 
         cardListView.setAdapter(new CardAdapter(MainActivity.this));
+
+        setContentView(R.layout.activity_maps);
+
     }
 
     @Override
