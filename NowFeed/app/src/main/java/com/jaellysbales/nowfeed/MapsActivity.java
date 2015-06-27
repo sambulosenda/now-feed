@@ -1,8 +1,12 @@
 package com.jaellysbales.nowfeed;
 
+import android.content.Intent;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.view.View;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -20,17 +24,56 @@ public class MapsActivity extends FragmentActivity
     public static final String TAG = MapsActivity.class.getSimpleName();
     private GoogleMap googleMap;
     private LocationProvider locationProvider;
+    private LatLng start = new LatLng(40.815009, -73.95929799999999); // start point for Directions API test
+    private LatLng end = new LatLng (40.742790, -73.935558); // end point for Directions API test
+
+    private TextView tv_card_map_title_minutes;
+    private TextView tv_card_map_title_destination;
+    private TextView tv_card_map_directions;
+
+    private String tripDuration;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-        // TODO: Check network/location is enabled, handle each case.
+        initializeViews();
+
+        /**
+         * TODO:
+         * Check network/location is enabled, handle each case.
+         * Parse directions and draw routes.
+         * Save home/work addresses and rewrite code to handle.
+         * savedInstanceState (+ lock to portrait)
+         */
+
         setUpMapIfNeeded();
+
         locationProvider = new LocationProvider(this, this);
+        DirectionsProvider directionsProvider = new DirectionsProvider(this);
+
+        directionsProvider.makeUrl(start.latitude, start.longitude, end.latitude, end.longitude);
+
+        // Launch intent for user to get directions from current location to destination
+        tv_card_map_directions.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String uri = "https://maps.google.com/maps?f=d&daddr=" +
+                        Double.toString(end.latitude) + "," + Double.toString(end.longitude);
+                Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                startActivity(i);
+            }
+        });
     }
 
+    public void initializeViews() {
+        tv_card_map_title_minutes = (TextView) findViewById(R.id.tv_card_map_title_minutes);
+        tv_card_map_title_destination = (TextView) findViewById(R.id.tv_card_map_title_destination);
+        tv_card_map_directions = (TextView) findViewById(R.id.tv_card_map_directions);
+
+    }
     @Override
     public void onMapReady(GoogleMap googleMap) {
         googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);

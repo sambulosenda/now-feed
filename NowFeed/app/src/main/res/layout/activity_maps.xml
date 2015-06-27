@@ -73,30 +73,12 @@
 
                 <!-- TODO: Change this icon to the correct one -->
                 <TextView
-                    android:id="@+id/tv_card_map_nav"
+                    android:id="@+id/tv_card_map_directions"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:drawableLeft="@drawable/ic_setting_light"
                     android:drawablePadding="4dp"
-                    android:text="Navigate / "
-                    android:textColor="#307ee1"
-                    android:textSize="18sp" />
-
-                <TextView
-                    android:id="@+id/tv_card_map_nav_minutes"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/tv_card_map_nav"
-                    android:text="{minutes} "
-                    android:textColor="#307ee1"
-                    android:textSize="18sp" />
-
-                <TextView
-                    android:id="@+id/tv_card_map_nav_street"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/tv_card_map_nav_minutes"
-                    android:text="via {street}"
+                    android:text="Get directions"
                     android:textColor="#307ee1"
                     android:textSize="18sp" />
 
