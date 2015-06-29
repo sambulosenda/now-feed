@@ -7,6 +7,8 @@ import android.content.Context;
  */
 public class DirectionsUtils {
 
+    // TODO: Might not need this file anymore, see GetRouteJsonData.java.
+
     private Context myContext;
     public final static String TAG_URL = "";
 
