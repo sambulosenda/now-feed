@@ -45,17 +45,17 @@
                     android:id="@+id/tv_card_map_title_minutes"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="{minutes} "
+                    android:text="46 mins "
                     android:textColor="#2c9925"
-                    android:textSize="24sp" />
+                    android:textSize="28sp" />
 
                 <TextView
                     android:id="@+id/tv_card_map_title_destination"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_toRightOf="@id/tv_card_map_title_minutes"
-                    android:text="to {destination}"
-                    android:textSize="24sp" />
+                    android:text="to work"
+                    android:textSize="28sp" />
 
                 <TextView
                     android:id="@+id/tv_card_map_subhead"
@@ -65,17 +65,17 @@
                     android:layout_marginBottom="16dp"
                     android:layout_marginTop="8dp"
                     android:singleLine="false"
-                    android:text="{congestion level} traffic on {street}"
+                    android:text="Google - 76 Ninth Ave, New York, NY 10011"
                     android:textColor="#bbbbbb"
-                    android:textSize="16sp" />
+                    android:textSize="18sp" />
 
                 <!-- TODO: Change this icon to the correct one -->
-                <ImageButton
-                    android:id="@+id/ib_map_settings"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:background="@drawable/ic_setting_light"/>
+                <!--<ImageButton-->
+                    <!--android:id="@+id/ib_map_settings"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_alignParentRight="true"-->
+                    <!--android:background="@drawable/ic_setting_light"/>-->
 
             </RelativeLayout>
 
@@ -99,7 +99,6 @@
                     android:id="@+id/tv_card_map_directions"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:drawableLeft="@drawable/ic_setting_light"
                     android:drawablePadding="4dp"
                     android:text="Get directions"
                     android:textColor="#307ee1"

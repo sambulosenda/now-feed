@@ -19,10 +19,11 @@ public class GetRouteJsonData extends GetRawData {
     private List<Route> routes;
     private Uri destinationUri;
 
-    public GetRouteJsonData(double startLat, double startLng, double endLat, double endLng) {
+    public GetRouteJsonData(double startLat, double startLng, String endAddress) {
         super(null);
-        createAndUpdateUri(startLat, startLng, endLat, endLng);
+        createAndUpdateUri(startLat, startLng, endAddress);
         routes = new ArrayList<>();
+        Log.d(LOG_TAG, destinationUri.toString());
     }
 
     public void execute() {
@@ -32,7 +33,7 @@ public class GetRouteJsonData extends GetRawData {
     }
 
     // Takes coordinates of start and end points and returns URL (string) for Directions API request.
-    public boolean createAndUpdateUri(double startLat, double startLng, double endLat, double endLng) {
+    public boolean createAndUpdateUri(double startLat, double startLng, String endAddress) {
 
         // These are required or never change
         final String MAPS_API_BASE_URL = "https://maps.googleapis.com/maps/api/directions/json";
@@ -46,13 +47,13 @@ public class GetRouteJsonData extends GetRawData {
         final String TRANSIT_MODE = "transit_mode";
 
         // Locations
-        String startLatLng = startLat + "," + startLng;
-        String endLatLng = endLat + "," + endLng;
+        String origin = startLat + "," + startLng;
+        String destination = endAddress;
 
         // Building the Directions API request
         destinationUri = Uri.parse(MAPS_API_BASE_URL).buildUpon()
-                .appendQueryParameter(PARAM_ORIGIN, startLatLng)
-                .appendQueryParameter(PARAM_DESTINATION, endLatLng)
+                .appendQueryParameter(PARAM_ORIGIN, origin)
+                .appendQueryParameter(PARAM_DESTINATION, destination)
                 .appendQueryParameter(MODE, "transit") // For simplicity's sake, limiting myself to one mode of transit...
                 .appendQueryParameter(ALTERNATIVES, "false") // ...and one route, for now.
                 .appendQueryParameter(TRANSIT_MODE, "subway")
@@ -60,6 +61,10 @@ public class GetRouteJsonData extends GetRawData {
                 .build();
 
         return destinationUri != null;
+    }
+
+    public List<Route> getRoutes() {
+        return routes;
     }
 
     public void processResult() {
@@ -77,7 +82,9 @@ public class GetRouteJsonData extends GetRawData {
         final String MAPS_TRIP_DISTANCE = "distance";
         final String MAPS_TRIP_DURATION = "duration";
         final String MAPS_START_ADDRESS = "start_address";
+        final String MAPS_START_LOCATION = "start_location";
         final String MAPS_END_ADDRESS = "end_address";
+        final String MAPS_END_LOCATION = "end_location";
         final String MAPS_OVERVIEW_POLYLINE = "overview_polyline";
 
         // Capture and retrieve data
@@ -108,14 +115,17 @@ public class GetRouteJsonData extends GetRawData {
             String duration = durationObj.getString("text");
 
             String startAddress = leg.getString(MAPS_START_ADDRESS);
+            String startLocation = leg.getString(MAPS_START_LOCATION);
             String endAddress = leg.getString(MAPS_END_ADDRESS);
+            String endLocation = leg.getString(MAPS_END_LOCATION);
 
             JSONObject overviewPolylineObj = route.getJSONObject(MAPS_OVERVIEW_POLYLINE);
             String polylinePoints = overviewPolylineObj.getString("points");
 
             // Create route object and load with new data
             Route routeObj = new Route(boundsNortheastLat, boundsNortheastLng, boundsSouthwestLat,
-                    boundsSouthwestLng, distance, duration, startAddress, endAddress, polylinePoints);
+                    boundsSouthwestLng, distance, duration, startAddress, startLocation, endAddress,
+                    endLocation, polylinePoints);
 
             this.routes.add(routeObj);
         
