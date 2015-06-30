@@ -51,12 +51,12 @@
                     android:textSize="16sp" />
 
                 <!-- TODO: Change this icon to the correct one -->
-                <ImageButton
-                    android:id="@+id/ib_map_settings"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:background="@drawable/ic_setting_light"/>
+                <!--<ImageButton-->
+                    <!--android:id="@+id/ib_map_settings"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_alignParentRight="true"-->
+                    <!--android:background="@drawable/ic_setting_light"/>-->
 
             </RelativeLayout>
 
@@ -76,7 +76,6 @@
                     android:id="@+id/tv_card_map_directions"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:drawableLeft="@drawable/ic_setting_light"
                     android:drawablePadding="4dp"
                     android:text="Get directions"
                     android:textColor="#307ee1"

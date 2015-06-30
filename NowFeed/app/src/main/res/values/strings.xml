@@ -2,4 +2,7 @@
     <string name="app_name">Now Feed</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_maps">Map</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+    <string name="dialog_title">Set addresses</string>
 </resources>
