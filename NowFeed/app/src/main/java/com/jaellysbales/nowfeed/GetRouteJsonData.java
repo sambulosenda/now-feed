@@ -118,16 +118,6 @@ public class GetRouteJsonData extends GetRawData {
                     boundsSouthwestLng, distance, duration, startAddress, endAddress, polylinePoints);
 
             this.routes.add(routeObj);
-
-            Log.v(LOG_TAG, routeObj.getBoundsNortheastLat());
-            Log.v(LOG_TAG, routeObj.getBoundsNortheastLng());
-            Log.v(LOG_TAG, routeObj.getBoundsSouthwestLat());
-            Log.v(LOG_TAG, routeObj.getBoundsSouthwestLng());
-            Log.v(LOG_TAG, routeObj.getDistance());
-            Log.v(LOG_TAG, routeObj.getDuration());
-            Log.v(LOG_TAG, routeObj.getStartAddress());
-            Log.v(LOG_TAG, routeObj.getEndAddress());
-            Log.v(LOG_TAG, routeObj.getPolylinePoints());
         
         } catch (JSONException jsone) {
             jsone.printStackTrace();
