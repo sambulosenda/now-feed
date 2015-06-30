@@ -19,8 +19,9 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 /**
  * Created by jaellysbales on 6/23/15.
@@ -35,8 +36,8 @@ public class MapsActivity extends FragmentActivity
 
     private GoogleMap googleMap;
     private LocationProvider locationProvider;
-    private LatLng start = new LatLng(40.815009, -73.95929799999999); // start point for Directions API test
-    private LatLng end = new LatLng(40.742790, -73.935558); // end point for Directions API test
+    private LatLng start = new LatLng(40.742790, -73.935558); // start point for Directions API test (C4Q)
+    private LatLng end = new LatLng(40.741781, -74.004501); // end point for Directions API test (Googz)
 
     private TextView tv_card_map_title_minutes;
     private TextView tv_card_map_title_destination;
@@ -56,8 +57,8 @@ public class MapsActivity extends FragmentActivity
         /**
          * TODO:
          * Check network/location is enabled, handle each case
-         * Save home/work addresses and rewrite code to handle
-         * Assigned JSON values to textviews
+         * Rewrite code to handle home/work as destinations (provide toggle)
+         * Assign JSON values to textviews
          * Markers
          * Draw routes
          * savedInstanceState (+ lock to portrait)
@@ -68,17 +69,14 @@ public class MapsActivity extends FragmentActivity
 
         locationProvider = new LocationProvider(this, this);
 
-        /* TODO: Rewrite this to take non-hardcoded values.
-         * Ex - user location coords for start latlng, their home/work for end latlng.
-         */
-
         loadPreferences();
+        endAddress = addressHome; // TODO: Allow toggle
 
         GetRouteJsonData jsonData = new GetRouteJsonData(start.latitude, start.longitude,
-                end.latitude, end.longitude);
+                endAddress);
         jsonData.execute();
 
-        // retrieve json values and set textviews
+        // retrieve json values and set textviews, set retrieve end latlng
 
         // Launch intent for user to get directions from current location to destination
         tv_card_map_directions.setOnClickListener(new View.OnClickListener() {
@@ -86,7 +84,7 @@ public class MapsActivity extends FragmentActivity
             public void onClick(View v) {
                 if (start != null && end != null) {
                     String uri = "https://maps.google.com/maps?f=d&daddr=" +
-                            Double.toString(end.latitude) + "," + Double.toString(end.longitude);
+                            Double.toString(end.latitude) + "," + Double.toString(end.longitude); // change this
                     Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
                     startActivity(i);
                 } else if (start == null) {
@@ -110,7 +108,12 @@ public class MapsActivity extends FragmentActivity
             googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
             googleMap.setMyLocationEnabled(true);
             MapsActivity.this.googleMap = googleMap;
-            // markers for home and work
+
+            MarkerOptions options = new MarkerOptions()
+                    .position(end)
+                    .title("Google");
+
+            googleMap.addMarker(options);
         }
     };
 
@@ -126,17 +129,17 @@ public class MapsActivity extends FragmentActivity
 
     @Override
     public void handleNewLocation(Location location) {
+        // TODO: CLEAN THIS UP
         double currentLatitude = location.getLatitude();
         double currentLongitude = location.getLongitude();
-        LatLng latLng = new LatLng(currentLatitude, currentLongitude);
+        LatLng currentLocation = new LatLng(currentLatitude, currentLongitude);
+        LatLng southwest = new LatLng(40.741971, -73.987691);
+        LatLng northeast = new LatLng(40.815581, -73.93099699999999);
+        LatLngBounds latLngBounds = new LatLngBounds(southwest, northeast);
 
         // Set position and zoom of camera on new location [use latlngbounds]
         if (googleMap != null) {
-            CameraPosition cameraPosition = new CameraPosition.Builder()
-                    .target(latLng)
-                    .zoom(16)
-                    .build();
-            googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 16));
         }
     }
 
