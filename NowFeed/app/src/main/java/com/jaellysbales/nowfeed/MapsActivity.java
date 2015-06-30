@@ -1,11 +1,12 @@
 package com.jaellysbales.nowfeed;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.view.View;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -17,7 +18,7 @@ import com.google.android.gms.maps.model.LatLng;
 /**
  * Created by jaellysbales on 6/23/15.
  */
-public class MapsActivity extends FragmentActivity
+public class MapsActivity extends Activity
         implements OnMapReadyCallback,
         LocationProvider.LocationCallback {
 
@@ -32,7 +33,6 @@ public class MapsActivity extends FragmentActivity
     private TextView tv_card_map_directions;
 
     private String tripDuration;
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,15 +57,12 @@ public class MapsActivity extends FragmentActivity
         directionsProvider.makeUrl(start.latitude, start.longitude, end.latitude, end.longitude);
 
         // Launch intent for user to get directions from current location to destination
-        tv_card_map_directions.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String uri = "https://maps.google.com/maps?f=d&daddr=" +
-                        Double.toString(end.latitude) + "," + Double.toString(end.longitude);
-                Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-                startActivity(i);
-            }
-        });
+        tv_card_map_directions.setOnClickListener(mapDirectionsListener);
+
+        ListView cardListView = (ListView) findViewById(R.id.card_list_view);
+        cardListView.setAdapter(new CardAdapter(MapsActivity.this));
+        
+
     }
 
     public void initializeViews() {
@@ -93,12 +90,11 @@ public class MapsActivity extends FragmentActivity
         locationProvider.disconnect();
     }
 
-    private void setUpMapIfNeeded() {
+    protected void setUpMapIfNeeded() {
         // Verify map has not already been instantiated.
         if (googleMap == null) {
             // Get maps system and view.
-            MapFragment mapFragment = (MapFragment) getFragmentManager()
-                    .findFragmentById(R.id.card_map_frag);
+            MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.card_map_frag);
             mapFragment.getMapAsync(this);
             // Verify map successfully obtained.
             if (googleMap != null) {
@@ -122,4 +118,16 @@ public class MapsActivity extends FragmentActivity
             googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         }
     }
+
+    public View.OnClickListener mapDirectionsListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            String uri = "https://maps.google.com/maps?f=d&daddr=" +
+                    Double.toString(end.latitude) + "," + Double.toString(end.longitude);
+            Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+            startActivity(i);
+        }
+    };
+
+
 }

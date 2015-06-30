@@ -2,9 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.jaellysbales.nowfeed" >
 
-
     <uses-permission android:name="com.android.alarm.permission.SET_ALARM"/>
-
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -35,11 +33,11 @@
             </intent-filter>
         </activity>
 
-        <!-- JAE: REMOVE KEY BEFORE PUSHING TO GIT -->
+        <!-- todo: JAE: REMOVE KEY BEFORE PUSHING TO GIT -->
         <!-- EVERYONE ELSE: ADD YOUR KEY BELOW -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="PUT_YOUR_KEY_HERE" />
+            android:value="@string/PUT_YOUR_KEY_HERE" />
     </application>
 
 </manifest>
