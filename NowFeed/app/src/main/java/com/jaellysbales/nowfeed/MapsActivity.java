@@ -5,7 +5,6 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,8 +41,8 @@ public class MapsActivity extends FragmentActivity
         /**
          * TODO:
          * Check network/location is enabled, handle each case.
-         * Parse directions and draw routes.
          * Save home/work addresses and rewrite code to handle.
+         * Draw routes.
          * savedInstanceState (+ lock to portrait)
          */
 
@@ -55,13 +54,10 @@ public class MapsActivity extends FragmentActivity
         /* TODO: Rewrite this to take non-hardcoded values.
          * Ex - user location coords for start latlng, their home/work for end latlng.
          */
-        DirectionsUtils directionsUtils = new DirectionsUtils(this);
-        String urlStr =
-                directionsUtils.makeUrl(start.latitude, start.longitude, end.latitude, end.longitude);
-        Log.d("URL", urlStr);
 
-        GetRawData rawData = new GetRawData(urlStr);
-        rawData.execute();
+        GetRouteJsonData jsonData = new GetRouteJsonData(start.latitude, start.longitude,
+                end.latitude, end.longitude);
+        jsonData.execute();
 
         // Launch intent for user to get directions from current location to destination
         tv_card_map_directions.setOnClickListener(new View.OnClickListener() {

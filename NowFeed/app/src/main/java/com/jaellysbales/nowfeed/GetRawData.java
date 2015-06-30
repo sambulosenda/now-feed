@@ -44,6 +44,10 @@ public class GetRawData {
         return downloadStatus;
     }
 
+    public void setRawUrl(String rawUrl) {
+        this.rawUrl = rawUrl;
+    }
+
     public void execute() {
         this.downloadStatus = DownloadStatus.PROCESSING;
         DownloadRawData downloadRawData = new DownloadRawData();
@@ -53,7 +57,6 @@ public class GetRawData {
     public class DownloadRawData extends AsyncTask<String, Void, String> {
         protected void onPostExecute(String webData) {
             data = webData;
-            Log.v(LOG_TAG, "Data returned: " + data);
             if (data == null) {
                 if (rawUrl == null) {
                     downloadStatus = DownloadStatus.NOT_INITIALIZED;
