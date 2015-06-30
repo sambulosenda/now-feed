@@ -41,6 +41,7 @@ public class MapsActivity extends FragmentActivity
 
     private TextView tv_card_map_title_minutes;
     private TextView tv_card_map_title_destination;
+    private TextView tv_card_map_subhead;
     private TextView tv_card_map_directions;
     private String endAddress;
     private String distance;
@@ -100,6 +101,7 @@ public class MapsActivity extends FragmentActivity
         tv_card_map_title_minutes = (TextView) findViewById(R.id.tv_card_map_title_minutes);
         tv_card_map_title_destination = (TextView) findViewById(R.id.tv_card_map_title_destination);
         tv_card_map_directions = (TextView) findViewById(R.id.tv_card_map_directions);
+        tv_card_map_subhead = (TextView) findViewById(R.id.tv_card_map_subhead);
     }
 
     private OnMapReadyCallback onMapReadyCallback = new OnMapReadyCallback() {
@@ -112,7 +114,6 @@ public class MapsActivity extends FragmentActivity
             MarkerOptions options = new MarkerOptions()
                     .position(end)
                     .title("Google");
-
             googleMap.addMarker(options);
         }
     };
@@ -154,6 +155,9 @@ public class MapsActivity extends FragmentActivity
                 Toast.LENGTH_SHORT).show();
         addressHome = prefAddressHome;
         addressWork = prefAddressWork;
+        tv_card_map_title_minutes.setVisibility(View.VISIBLE);
+        tv_card_map_title_destination.setVisibility(View.VISIBLE);
+        tv_card_map_subhead.setVisibility(View.VISIBLE);
     }
 
     public void loadPreferences() {
@@ -174,6 +178,9 @@ public class MapsActivity extends FragmentActivity
             addressWork = prefAddressWork;
             Toast.makeText(MapsActivity.this, "Home: " + addressHome + "\n" + "Work: " +
                     addressWork, Toast.LENGTH_SHORT).show();
+            tv_card_map_title_minutes.setVisibility(View.VISIBLE);
+            tv_card_map_title_destination.setVisibility(View.VISIBLE);
+            tv_card_map_subhead.setVisibility(View.VISIBLE);
         }
     }
 

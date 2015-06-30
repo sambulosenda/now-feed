@@ -28,7 +28,8 @@
                     android:layout_height="wrap_content"
                     android:text="46 mins "
                     android:textColor="#2c9925"
-                    android:textSize="28sp" />
+                    android:textSize="28sp"
+                    android:visibility="invisible"/>
 
                 <TextView
                     android:id="@+id/tv_card_map_title_destination"
@@ -36,7 +37,8 @@
                     android:layout_height="wrap_content"
                     android:layout_toRightOf="@id/tv_card_map_title_minutes"
                     android:text="to work"
-                    android:textSize="28sp" />
+                    android:textSize="28sp"
+                    android:visibility="invisible"/>
 
                 <TextView
                     android:id="@+id/tv_card_map_subhead"
@@ -48,7 +50,8 @@
                     android:singleLine="false"
                     android:text="Google - 76 Ninth Ave, New York, NY 10011"
                     android:textColor="#bbbbbb"
-                    android:textSize="18sp" />
+                    android:textSize="18sp"
+                    android:visibility="invisible"/>
 
                 <!-- TODO: Change this icon to the correct one -->
                 <!--<ImageButton-->
@@ -77,9 +80,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:drawablePadding="4dp"
-                    android:text="Get directions"
+                    android:text="Get directions via subway"
                     android:textColor="#307ee1"
-                    android:textSize="18sp" />
+                    android:textSize="18sp"/>
 
             </RelativeLayout>
 
