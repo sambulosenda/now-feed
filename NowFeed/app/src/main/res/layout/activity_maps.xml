@@ -26,19 +26,17 @@
                     android:id="@+id/tv_card_map_title_minutes"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="46 mins "
+                    android:text="{minutes} "
                     android:textColor="#2c9925"
-                    android:textSize="28sp"
-                    android:visibility="invisible"/>
+                    android:textSize="28sp"/>
 
                 <TextView
                     android:id="@+id/tv_card_map_title_destination"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_toRightOf="@id/tv_card_map_title_minutes"
-                    android:text="to work"
-                    android:textSize="28sp"
-                    android:visibility="invisible"/>
+                    android:text="to {destination}"
+                    android:textSize="28sp"/>
 
                 <TextView
                     android:id="@+id/tv_card_map_subhead"
@@ -48,18 +46,9 @@
                     android:layout_marginBottom="16dp"
                     android:layout_marginTop="8dp"
                     android:singleLine="false"
-                    android:text="Google - 76 Ninth Ave, New York, NY 10011"
+                    android:text="{destination address}"
                     android:textColor="#bbbbbb"
-                    android:textSize="18sp"
-                    android:visibility="invisible"/>
-
-                <!-- TODO: Change this icon to the correct one -->
-                <!--<ImageButton-->
-                    <!--android:id="@+id/ib_map_settings"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_alignParentRight="true"-->
-                    <!--android:background="@drawable/ic_setting_light"/>-->
+                    android:textSize="18sp"/>
 
             </RelativeLayout>
 
@@ -80,7 +69,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:drawablePadding="4dp"
-                    android:text="Get directions via subway"
+                    android:text="Get directions via {mode of transit}"
                     android:textColor="#307ee1"
                     android:textSize="18sp"/>
 

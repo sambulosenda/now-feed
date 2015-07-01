@@ -19,8 +19,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 /**
@@ -133,14 +133,16 @@ public class MapsActivity extends FragmentActivity
         // TODO: CLEAN THIS UP
         double currentLatitude = location.getLatitude();
         double currentLongitude = location.getLongitude();
-        LatLng currentLocation = new LatLng(currentLatitude, currentLongitude);
-        LatLng southwest = new LatLng(40.741971, -73.987691);
-        LatLng northeast = new LatLng(40.815581, -73.93099699999999);
-        LatLngBounds latLngBounds = new LatLngBounds(southwest, northeast);
+        LatLng latLng = new LatLng(currentLatitude, currentLongitude);
+
 
         // Set position and zoom of camera on new location [use latlngbounds]
         if (googleMap != null) {
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 16));
+            CameraPosition cameraPosition = new CameraPosition.Builder()
+                    .target(latLng)
+                    .zoom(16)
+                    .build();
+            googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         }
     }
 
@@ -155,9 +157,6 @@ public class MapsActivity extends FragmentActivity
                 Toast.LENGTH_SHORT).show();
         addressHome = prefAddressHome;
         addressWork = prefAddressWork;
-        tv_card_map_title_minutes.setVisibility(View.VISIBLE);
-        tv_card_map_title_destination.setVisibility(View.VISIBLE);
-        tv_card_map_subhead.setVisibility(View.VISIBLE);
     }
 
     public void loadPreferences() {
@@ -178,9 +177,6 @@ public class MapsActivity extends FragmentActivity
             addressWork = prefAddressWork;
             Toast.makeText(MapsActivity.this, "Home: " + addressHome + "\n" + "Work: " +
                     addressWork, Toast.LENGTH_SHORT).show();
-            tv_card_map_title_minutes.setVisibility(View.VISIBLE);
-            tv_card_map_title_destination.setVisibility(View.VISIBLE);
-            tv_card_map_subhead.setVisibility(View.VISIBLE);
         }
     }
 
