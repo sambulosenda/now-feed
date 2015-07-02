@@ -31,6 +31,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -39,17 +40,14 @@ import java.util.List;
 public class MapsActivity extends FragmentActivity
         implements LocationProvider.LocationCallback {
 
-    SharedPreferences sharedPreferences;
-
     public static final String MAPS_PREFS = "UserPlacesPrefs";
     public static final String DEFAULT = "Default";
-
+    SharedPreferences sharedPreferences;
+    LatLngBounds latLngBounds;
     private GoogleMap googleMap;
     private LocationProvider locationProvider;
     private LatLng startLatLng = null;
     private LatLng endLatLng = null;
-    LatLngBounds latLngBounds;
-
     private TextView tv_card_map_title_minutes;
     private TextView tv_card_map_title_destination;
     private TextView tv_card_map_subhead;
@@ -57,7 +55,6 @@ public class MapsActivity extends FragmentActivity
     private String addressHome;
     private String addressWork;
     private String endAddress;
-
     private GetRouteJsonData getRouteJsonData;
     private List<Route> routes;
 
@@ -70,6 +67,15 @@ public class MapsActivity extends FragmentActivity
             setEndLatLngAndMarker();
             setTextViewsToJsonData();
             setMapCameraView();
+        }
+    };
+
+    private OnMapReadyCallback onMapReadyCallback = new OnMapReadyCallback() {
+        @Override
+        public void onMapReady(GoogleMap googleMap) {
+            googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+            googleMap.setMyLocationEnabled(true);
+            MapsActivity.this.googleMap = googleMap;
         }
     };
 
@@ -126,7 +132,7 @@ public class MapsActivity extends FragmentActivity
             latLngBounds = new LatLngBounds(southwestLatLng, northeastLatLng);
         }
 
-        // Set position and zoom of camera on new location [use latlngbounds]
+        // Set position and zoom of camera on location received
         if (googleMap != null) {
             CameraUpdate cameraUpdate = CameraUpdateFactory
                     .newLatLngBounds(latLngBounds, 16);
@@ -170,15 +176,6 @@ public class MapsActivity extends FragmentActivity
         }
     }
 
-    private OnMapReadyCallback onMapReadyCallback = new OnMapReadyCallback() {
-        @Override
-        public void onMapReady(GoogleMap googleMap) {
-            googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-            googleMap.setMyLocationEnabled(true);
-            MapsActivity.this.googleMap = googleMap;
-        }
-    };
-
     @Override
     public void handleNewLocation(Location location) {
         // TODO: CLEAN THIS UP
@@ -200,7 +197,7 @@ public class MapsActivity extends FragmentActivity
     }
 
     private void getRouteData() {
-        endAddress = addressHome; // TODO: if/else set destination morning vs evening
+        getTimeAndSetEndAddress();
 
         if (startLatLng == null) {
             Log.d("GET ROUTE DATA", "No start location yet");
@@ -216,29 +213,8 @@ public class MapsActivity extends FragmentActivity
                 endAddress);
         getRouteJsonData.execute();
 
-//        setTextViewsToJsonData();
-
-        // retrieve json values and set textviews, set retrieve endLatLng latlng
-
         tv_card_map_directions.setOnClickListener(mapDirectionsListener);
     }
-
-    // Launch intent for user to get directions from current location to destination
-    public View.OnClickListener mapDirectionsListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (startLatLng != null && endLatLng != null) {
-                String uri = "https://maps.google.com/maps?f=d&daddr=" +
-                        Double.toString(endLatLng.latitude) + "," + Double.toString(endLatLng.longitude); // change this
-                Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-                startActivity(i);
-            } else if (startLatLng == null) {
-                Toast.makeText(MapsActivity.this, "No origin/location set", Toast.LENGTH_SHORT).show();
-            } else if (endLatLng == null) {
-                Toast.makeText(MapsActivity.this, "No destination set", Toast.LENGTH_SHORT).show();
-            }
-        }
-    };
 
     public void setPreferences(String prefAddressHome, String prefAddressWork) {
         sharedPreferences = this.getSharedPreferences(MAPS_PREFS,
@@ -247,8 +223,7 @@ public class MapsActivity extends FragmentActivity
         editor.putString("HOME", prefAddressHome);
         editor.putString("WORK", prefAddressWork);
         editor.apply();
-        Toast.makeText(MapsActivity.this, "Data set: Home - " + addressHome + " Work: " + addressWork,
-                Toast.LENGTH_SHORT).show();
+
         addressHome = prefAddressHome;
         addressWork = prefAddressWork;
     }
@@ -266,12 +241,9 @@ public class MapsActivity extends FragmentActivity
 
             // TODO: 1.) Validate input. 2.) Allow user to access and edit their preferences.
         } else {
-            Toast.makeText(MapsActivity.this, "Data loaded successfully", Toast.LENGTH_SHORT).show();
             addressHome = prefAddressHome;
             addressWork = prefAddressWork;
             getRouteData();
-//            Toast.makeText(MapsActivity.this, "Home: " + addressHome + "\n" + "Work: " +
-//                    addressWork, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -306,6 +278,33 @@ public class MapsActivity extends FragmentActivity
         return builder.create();
     }
 
+    public void getTimeAndSetEndAddress() {
+        Calendar c = Calendar.getInstance();
+        int timeOfDay = c.get(Calendar.HOUR_OF_DAY);
+
+        if (timeOfDay >= 0 && timeOfDay < 12) {
+            endAddress = addressWork;
+        } else if (timeOfDay >= 12 && timeOfDay <= 24) {
+            endAddress = addressHome;
+        }
+    }
+
+    // Launch intent for user to get directions from current location to destination
+    public View.OnClickListener mapDirectionsListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (startLatLng != null && endLatLng != null) {
+                String uri = "https://maps.google.com/maps?f=d&daddr=" +
+                        Double.toString(endLatLng.latitude) + "," + Double.toString(endLatLng.longitude); // change this
+                Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                startActivity(i);
+            } else if (startLatLng == null) {
+                Toast.makeText(MapsActivity.this, "No origin/location set", Toast.LENGTH_SHORT).show();
+            } else if (endLatLng == null) {
+                Toast.makeText(MapsActivity.this, "No destination set", Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
 
     @Override
     protected void onResume() {
