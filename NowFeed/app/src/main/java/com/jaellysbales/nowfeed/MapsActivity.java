@@ -2,14 +2,18 @@ package com.jaellysbales.nowfeed;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -23,6 +27,8 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.List;
+
 /**
  * Created by jaellysbales on 6/23/15.
  */
@@ -31,7 +37,7 @@ public class MapsActivity extends FragmentActivity
 
     SharedPreferences sharedPreferences;
 
-    public static final String USER_PLACES_PREFS = "UserPlacesPrefs";
+    public static final String MAPS_PREFS = "UserPlacesPrefs";
     public static final String DEFAULT = "Default";
 
     private GoogleMap googleMap;
@@ -43,12 +49,22 @@ public class MapsActivity extends FragmentActivity
     private TextView tv_card_map_title_destination;
     private TextView tv_card_map_subhead;
     private TextView tv_card_map_directions;
-    private String endAddress;
+    private String addressHome;
+    private String addressWork;
+    private String endAddress = "";
     private String distance;
     private String duration;
 
-    private String addressHome;
-    private String addressWork;
+    private GetRouteJsonData getRouteJsonData;
+    private List<Route> routes;
+
+    private BroadcastReceiver mMapRouteMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            routes = getRouteJsonData.getRoutes();
+            Log.d("ROUTES", "Received routes: " + routes.size());
+        }
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -71,30 +87,22 @@ public class MapsActivity extends FragmentActivity
         locationProvider = new LocationProvider(this, this);
 
         loadPreferences();
-        endAddress = addressHome; // TODO: Allow toggle
+//        endAddress = addressHome; // TODO: Allow toggle
 
-        GetRouteJsonData jsonData = new GetRouteJsonData(start.latitude, start.longitude,
+        endAddress = "350 5th Avenue New York NY 10118";
+
+        // register our receiver with LocalBroadcastManager
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+                mMapRouteMessageReceiver,
+                new IntentFilter(GetRouteJsonData.MAP_ROUTE_DATA_AVAILABLE));
+
+        getRouteJsonData = new GetRouteJsonData(start.latitude, start.longitude,
                 endAddress);
-        jsonData.execute();
+        getRouteJsonData.execute();
 
         // retrieve json values and set textviews, set retrieve end latlng
 
-        // Launch intent for user to get directions from current location to destination
-        tv_card_map_directions.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (start != null && end != null) {
-                    String uri = "https://maps.google.com/maps?f=d&daddr=" +
-                            Double.toString(end.latitude) + "," + Double.toString(end.longitude); // change this
-                    Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-                    startActivity(i);
-                } else if (start == null) {
-                    Toast.makeText(MapsActivity.this, "No origin/location set", Toast.LENGTH_SHORT).show();
-                } else if (end == null) {
-                    Toast.makeText(MapsActivity.this, "No destination set", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+        tv_card_map_directions.setOnClickListener(mapDirectionsListener);
     }
 
     public void initializeViews() {
@@ -146,8 +154,25 @@ public class MapsActivity extends FragmentActivity
         }
     }
 
+    // Launch intent for user to get directions from current location to destination
+    public View.OnClickListener mapDirectionsListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (start != null && end != null) {
+                String uri = "https://maps.google.com/maps?f=d&daddr=" +
+                        Double.toString(end.latitude) + "," + Double.toString(end.longitude); // change this
+                Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                startActivity(i);
+            } else if (start == null) {
+                Toast.makeText(MapsActivity.this, "No origin/location set", Toast.LENGTH_SHORT).show();
+            } else if (end == null) {
+                Toast.makeText(MapsActivity.this, "No destination set", Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
+
     public void setPreferences(String prefAddressHome, String prefAddressWork) {
-        sharedPreferences = this.getSharedPreferences(USER_PLACES_PREFS,
+        sharedPreferences = this.getSharedPreferences(MAPS_PREFS,
                 Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("HOME", prefAddressHome);
@@ -160,7 +185,7 @@ public class MapsActivity extends FragmentActivity
     }
 
     public void loadPreferences() {
-        sharedPreferences = this.getSharedPreferences(USER_PLACES_PREFS,
+        sharedPreferences = this.getSharedPreferences(MAPS_PREFS,
                 Context.MODE_PRIVATE);
         String prefAddressHome = sharedPreferences.getString("HOME", DEFAULT);
         String prefAddressWork = sharedPreferences.getString("WORK", DEFAULT);
