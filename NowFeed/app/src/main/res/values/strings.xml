@@ -7,7 +7,17 @@
     <string name="dialog_title">Set addresses</string>
 
 
-    <!--Todo: DO NOT COMMIT THIS -->
-    <string name="PUT_YOUR_KEY_HERE">AIzaSyCsltXYb_w-qLh1bWa9FxB1-VRHl5jojJ4</string>
+
+
+
+
+
+    <string name="jb_maps_key"></string>
+    <string name="project_maps_key">a1233</string>
+    <string name="maps_api_key">@string/jb_maps_key</string>
+
+    <string name="jb_directions_key"></string>
+    <string name="project_directions_key">Atest</string>
+    <string name="directions_api_key">@string/jb_directions_key</string>
 
 </resources>

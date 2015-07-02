@@ -1,6 +1,8 @@
 package com.jaellysbales.nowfeed;
 
+import android.content.Intent;
 import android.net.Uri;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -14,7 +16,7 @@ import java.util.List;
  * Created by jaellysbales on 6/29/15.
  */
 public class GetRouteJsonData extends GetRawData {
-
+    public static final String MAP_ROUTE_DATA_AVAILABLE = "GetRouteJsonData.mapRouteReady";
     private String LOG_TAG = GetRouteJsonData.class.getSimpleName();
     private List<Route> routes;
     private Uri destinationUri;
@@ -57,7 +59,7 @@ public class GetRouteJsonData extends GetRawData {
                 .appendQueryParameter(MODE, "transit") // For simplicity's sake, limiting myself to one mode of transit...
                 .appendQueryParameter(ALTERNATIVES, "false") // ...and one route, for now.
                 .appendQueryParameter(TRANSIT_MODE, "subway")
-                .appendQueryParameter(KEY, "PUT_YOUR_KEY_HERE")
+                .appendQueryParameter(KEY, NowFeedApplication.getInstance().getResources().getString(R.string.directions_api_key))
                 .build();
 
         return destinationUri != null;
@@ -128,11 +130,18 @@ public class GetRouteJsonData extends GetRawData {
                     endLocation, polylinePoints);
 
             this.routes.add(routeObj);
-        
+
+            sendNotification();
+
         } catch (JSONException jsone) {
             jsone.printStackTrace();
             Log.v(LOG_TAG, "Error processing JSON data");
         }
+    }
+
+    private void sendNotification() {
+        Intent intent = new Intent(MAP_ROUTE_DATA_AVAILABLE);
+        LocalBroadcastManager.getInstance(NowFeedApplication.getInstance()).sendBroadcast(intent);
     }
 
     public class DownloadJsonData extends DownloadRawData {

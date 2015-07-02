@@ -2,15 +2,19 @@ package com.jaellysbales.nowfeed;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
+import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -21,9 +25,11 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.util.List;
 
 /**
  * Created by jaellysbales on 6/23/15.
@@ -34,7 +40,7 @@ public class MapsActivity extends FragmentActivity
 
     SharedPreferences sharedPreferences;
 
-    public static final String USER_PLACES_PREFS = "UserPlacesPrefs";
+    public static final String MAPS_PREFS = "UserPlacesPrefs";
     public static final String DEFAULT = "Default";
 
     private GoogleMap googleMap;
@@ -44,13 +50,24 @@ public class MapsActivity extends FragmentActivity
 
     private TextView tv_card_map_title_minutes;
     private TextView tv_card_map_title_destination;
+    private TextView tv_card_map_subhead;
     private TextView tv_card_map_directions;
-    private String endAddress;
+    private String addressHome;
+    private String addressWork;
+    private String endAddress = "";
     private String distance;
     private String duration;
 
-    private String addressHome;
-    private String addressWork;
+    private GetRouteJsonData getRouteJsonData;
+    private List<Route> routes;
+
+    private BroadcastReceiver mMapRouteMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            routes = getRouteJsonData.getRoutes();
+            Log.d("ROUTES", "Received routes: " + routes.size());
+        }
+    };
 
 
     @Override
@@ -74,11 +91,18 @@ public class MapsActivity extends FragmentActivity
         locationProvider = new LocationProvider(this, this);
 
         loadPreferences();
-        endAddress = addressHome; // TODO: Allow toggle
+//        endAddress = addressHome; // TODO: Allow toggle
 
-        GetRouteJsonData jsonData = new GetRouteJsonData(start.latitude, start.longitude,
+        endAddress = "350 5th Avenue New York NY 10118";
+
+        // register our receiver with LocalBroadcastManager
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+                mMapRouteMessageReceiver,
+                new IntentFilter(GetRouteJsonData.MAP_ROUTE_DATA_AVAILABLE));
+
+        getRouteJsonData = new GetRouteJsonData(start.latitude, start.longitude,
                 endAddress);
-        jsonData.execute();
+        getRouteJsonData.execute();
 
         // retrieve json values and set textviews, set retrieve end latlng
 
@@ -102,6 +126,7 @@ public class MapsActivity extends FragmentActivity
         tv_card_map_title_minutes = (TextView) findViewById(R.id.tv_card_map_title_minutes);
         tv_card_map_title_destination = (TextView) findViewById(R.id.tv_card_map_title_destination);
         tv_card_map_directions = (TextView) findViewById(R.id.tv_card_map_directions);
+        tv_card_map_subhead = (TextView) findViewById(R.id.tv_card_map_subhead);
     }
 
     private OnMapReadyCallback onMapReadyCallback = new OnMapReadyCallback() {
@@ -114,7 +139,6 @@ public class MapsActivity extends FragmentActivity
             MarkerOptions options = new MarkerOptions()
                     .position(end)
                     .title("Google");
-
             googleMap.addMarker(options);
         }
     };
@@ -134,24 +158,26 @@ public class MapsActivity extends FragmentActivity
         // TODO: CLEAN THIS UP
         double currentLatitude = location.getLatitude();
         double currentLongitude = location.getLongitude();
-        LatLng currentLocation = new LatLng(currentLatitude, currentLongitude);
-        LatLng southwest = new LatLng(40.741971, -73.987691);
-        LatLng northeast = new LatLng(40.815581, -73.93099699999999);
-        LatLngBounds latLngBounds = new LatLngBounds(southwest, northeast);
+        LatLng latLng = new LatLng(currentLatitude, currentLongitude);
 
         // Set position and zoom of camera on new location [use latlngbounds]
         if (googleMap != null) {
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 16));
+            CameraPosition cameraPosition = new CameraPosition.Builder()
+                    .target(latLng)
+                    .zoom(16)
+                    .build();
+            googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         }
     }
 
 
+    // Launch intent for user to get directions from current location to destination
     public View.OnClickListener mapDirectionsListener = new View.OnClickListener() {
         @Override
-        public void onClick(View view) {
+        public void onClick(View v) {
             if (start != null && end != null) {
                 String uri = "https://maps.google.com/maps?f=d&daddr=" +
-                        Double.toString(end.latitude) + "," + Double.toString(end.longitude);
+                        Double.toString(end.latitude) + "," + Double.toString(end.longitude); // change this
                 Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
                 startActivity(i);
             } else if (start == null) {
@@ -163,7 +189,7 @@ public class MapsActivity extends FragmentActivity
     };
 
     public void setPreferences(String prefAddressHome, String prefAddressWork) {
-        sharedPreferences = this.getSharedPreferences(USER_PLACES_PREFS,
+        sharedPreferences = this.getSharedPreferences(MAPS_PREFS,
                 Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("HOME", prefAddressHome);
@@ -176,7 +202,7 @@ public class MapsActivity extends FragmentActivity
     }
 
     public void loadPreferences() {
-        sharedPreferences = this.getSharedPreferences(USER_PLACES_PREFS,
+        sharedPreferences = this.getSharedPreferences(MAPS_PREFS,
                 Context.MODE_PRIVATE);
         String prefAddressHome = sharedPreferences.getString("HOME", DEFAULT);
         String prefAddressWork = sharedPreferences.getString("WORK", DEFAULT);
