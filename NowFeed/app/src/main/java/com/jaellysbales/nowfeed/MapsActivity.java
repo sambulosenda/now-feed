@@ -8,13 +8,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.view.LayoutInflater;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -28,6 +29,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.jaellysbales.nowfeed.db.TaskContract;
+import com.jaellysbales.nowfeed.db.TaskDBHelper;
 
 import java.util.List;
 
@@ -117,8 +120,9 @@ public class MapsActivity extends FragmentActivity
         //populating other views into linearlayout
         LinearLayout cardsLayout = (LinearLayout) findViewById(R.id.cards_stored_linear_layout);
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        cardsLayout.addView(TodoCardTwo.createTodoTwoView(inflater));
         cardsLayout.addView(AlarmCard.createAlarmView(inflater));
-        cardsLayout.addView(TodoCard.createTodoView(inflater));
+        //cardsLayout.addView(TodoCard.createTodoView(inflater)); maybe call this a notepad feature,
 
     }
 
@@ -257,6 +261,9 @@ public class MapsActivity extends FragmentActivity
         super.onResume();
         setUpMapIfNeeded();
         locationProvider.connect();
+
+        AlarmCard.showNextAlarm();
+
     }
 
     @Override
@@ -264,4 +271,23 @@ public class MapsActivity extends FragmentActivity
         super.onPause();
         locationProvider.disconnect();
     }
+
+
+
+    public static void doneOnClick(View view){
+        View v = (View) view.getParent();
+        TextView taskTextView = (TextView) v.findViewById(R.id.taskTextView);
+        String task = taskTextView.getText().toString();
+
+        String sql = String.format("DELETE FROM %s WHERE %s = '%s'",
+                TaskContract.TABLE,
+                TaskContract.Columns.TASK,
+                task);
+
+        TodoCardTwo.helper = new TaskDBHelper(TodoCardTwo.todoViewTwo.getContext());
+        SQLiteDatabase sqlDB = TodoCardTwo.helper.getWritableDatabase();
+        sqlDB.execSQL(sql);
+        TodoCardTwo.updateUI();
+    }
+
 }
