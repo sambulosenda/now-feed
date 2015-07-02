@@ -19,12 +19,14 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -44,8 +46,9 @@ public class MapsActivity extends FragmentActivity
 
     private GoogleMap googleMap;
     private LocationProvider locationProvider;
-    private LatLng startLatLng = null; // new LatLng(40.742790, -73.935558); // startLatLng point for Directions API test (C4Q)
-    private LatLng endLatLng = new LatLng(40.741781, -74.004501); // endLatLng point for Directions API test (Googz)
+    private LatLng startLatLng = null;
+    private LatLng endLatLng = null;
+    LatLngBounds latLngBounds;
 
     private TextView tv_card_map_title_minutes;
     private TextView tv_card_map_title_destination;
@@ -53,9 +56,7 @@ public class MapsActivity extends FragmentActivity
     private TextView tv_card_map_directions;
     private String addressHome;
     private String addressWork;
-    private String endAddress = "";
-    private String distance;
-    private String duration;
+    private String endAddress;
 
     private GetRouteJsonData getRouteJsonData;
     private List<Route> routes;
@@ -66,6 +67,9 @@ public class MapsActivity extends FragmentActivity
             routes = getRouteJsonData.getRoutes();
             Log.d("ROUTES", "Received routes: " + routes.size());
             drawRoutePolylines();
+            setEndLatLngAndMarker();
+            setTextViewsToJsonData();
+            setMapCameraView();
         }
     };
 
@@ -75,11 +79,58 @@ public class MapsActivity extends FragmentActivity
             PolylineOptions rectOptions = new PolylineOptions();
             rectOptions.addAll(chosenRoute.getPointsOnPath());
 
-            //TODO: uncomment this if closure is required for polyline
-//                rectOptions.add(chosenRoute.getPointsOnPath().get(0));
-
             // Get back the mutable Polyline
             Polyline polyline = googleMap.addPolyline(rectOptions);
+        }
+    }
+
+    public void setEndLatLngAndMarker() {
+        if (routes != null && googleMap != null) {
+            endLatLng = routes.get(0).getEndPoint();
+
+            String markerTitle = "";
+            if (endAddress.equals(addressHome)) {
+                markerTitle = "Home";
+            } else {
+                markerTitle = "Work";
+            }
+
+            MarkerOptions endLoc = new MarkerOptions()
+                    .position(endLatLng)
+                    .title(markerTitle);
+            googleMap.addMarker(endLoc);
+        }
+    }
+
+    public void setTextViewsToJsonData() {
+        if (routes != null) {
+            tv_card_map_title_minutes.setText(routes.get(0).getDuration());
+
+            if (endAddress.equals(addressHome)) {
+                tv_card_map_title_destination.setText(" to home");
+            } else {
+                tv_card_map_title_destination.setText(" to work");
+            }
+            tv_card_map_subhead.setText(routes.get(0).getEndAddress());
+            tv_card_map_directions.setText("Get subway directions"); // TODO: Allow for more modes of transit
+        }
+    }
+
+    public void setMapCameraView() {
+        if (routes != null) {
+            LatLng northeastLatLng = new LatLng(routes.get(0).getBoundsNortheastLat(),
+                    routes.get(0).getBoundsNortheastLng());
+            LatLng southwestLatLng = new LatLng(routes.get(0).getBoundsSouthwestLat(),
+                    routes.get(0).getBoundsSouthwestLng());
+
+            latLngBounds = new LatLngBounds(southwestLatLng, northeastLatLng);
+        }
+
+        // Set position and zoom of camera on new location [use latlngbounds]
+        if (googleMap != null) {
+            CameraUpdate cameraUpdate = CameraUpdateFactory
+                    .newLatLngBounds(latLngBounds, 16);
+            googleMap.moveCamera(cameraUpdate);
         }
     }
 
@@ -88,24 +139,12 @@ public class MapsActivity extends FragmentActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-        /**
-         * TODO:
-         * Check network/location is enabled, handle each case
-         * Rewrite code to handle home/work as destinations (provide toggle)
-         * Assign JSON values to textviews
-         * Markers
-         * Draw routes
-         * savedInstanceState (+ lock to portrait)
-         */
-
         initializeViews();
         setUpMapIfNeeded();
 
         locationProvider = new LocationProvider(this, this);
 
         loadPreferences();
-
-//        endAddress = "350 5th Avenue New York NY 10118";
 
         // register our receiver with LocalBroadcastManager
         LocalBroadcastManager.getInstance(this).registerReceiver(
@@ -121,20 +160,6 @@ public class MapsActivity extends FragmentActivity
         tv_card_map_subhead = (TextView) findViewById(R.id.tv_card_map_subhead);
     }
 
-    private OnMapReadyCallback onMapReadyCallback = new OnMapReadyCallback() {
-        @Override
-        public void onMapReady(GoogleMap googleMap) {
-            googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-            googleMap.setMyLocationEnabled(true);
-            MapsActivity.this.googleMap = googleMap;
-
-            MarkerOptions options = new MarkerOptions()
-                    .position(endLatLng)
-                    .title("Google");
-            googleMap.addMarker(options);
-        }
-    };
-
     private void setUpMapIfNeeded() {
         // Verify map has not already been instantiated.
         if (googleMap == null) {
@@ -144,6 +169,15 @@ public class MapsActivity extends FragmentActivity
             mapFragment.getMapAsync(onMapReadyCallback);
         }
     }
+
+    private OnMapReadyCallback onMapReadyCallback = new OnMapReadyCallback() {
+        @Override
+        public void onMapReady(GoogleMap googleMap) {
+            googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+            googleMap.setMyLocationEnabled(true);
+            MapsActivity.this.googleMap = googleMap;
+        }
+    };
 
     @Override
     public void handleNewLocation(Location location) {
@@ -158,14 +192,11 @@ public class MapsActivity extends FragmentActivity
             getRouteData();
         }
 
-        // Set position and zoom of camera on new location [use latlngbounds]
-        if (googleMap != null) {
-            CameraPosition cameraPosition = new CameraPosition.Builder()
-                    .target(startLatLng)
-                    .zoom(16)
-                    .build();
-            googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-        }
+        CameraPosition cameraPosition = new CameraPosition.Builder()
+                .target(startLatLng)
+                .zoom(16)
+                .build();
+        googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
 
     private void getRouteData() {
@@ -275,9 +306,6 @@ public class MapsActivity extends FragmentActivity
         return builder.create();
     }
 
-    public void setTextViewsToJsonData() {
-        tv_card_map_title_minutes.setText(routes.get(0).getDuration());
-    }
 
     @Override
     protected void onResume() {

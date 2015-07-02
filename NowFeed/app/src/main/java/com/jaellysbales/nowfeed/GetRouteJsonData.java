@@ -106,11 +106,11 @@ public class GetRouteJsonData extends GetRawData {
             // Retrieve coordinates data
             JSONObject boundsObj = route.getJSONObject(MAPS_BOUNDS);
             JSONObject boundsNortheast = boundsObj.getJSONObject(MAPS_BOUNDS_NE);
-            String boundsNortheastLat = boundsNortheast.getString("lat");
-            String boundsNortheastLng = boundsNortheast.getString("lng");
+            double boundsNortheastLat = boundsNortheast.getDouble("lat");
+            double boundsNortheastLng = boundsNortheast.getDouble("lng");
             JSONObject boundsSouthwest = boundsObj.getJSONObject(MAPS_BOUNDS_SW);
-            String boundsSouthwestLat = boundsSouthwest.getString("lat");
-            String boundsSouthwestLng = boundsSouthwest.getString("lng");
+            double boundsSouthwestLat = boundsSouthwest.getDouble("lat");
+            double boundsSouthwestLng = boundsSouthwest.getDouble("lng");
 
             JSONObject distanceObj = leg.getJSONObject(MAPS_TRIP_DISTANCE);
             String distance = distanceObj.getString("text");
@@ -119,28 +119,31 @@ public class GetRouteJsonData extends GetRawData {
             String duration = durationObj.getString("text");
 
             String startAddress = leg.getString(MAPS_START_ADDRESS);
-            String startLocation = leg.getString(MAPS_START_LOCATION);
             String endAddress = leg.getString(MAPS_END_ADDRESS);
-            String endLocation = leg.getString(MAPS_END_LOCATION);
 
             JSONObject overviewPolylineObj = route.getJSONObject(MAPS_OVERVIEW_POLYLINE);
             String polylinePoints = overviewPolylineObj.getString("points");
 
             List<LatLng> pointsOnPath = new ArrayList<>();
+            LatLng endPoint = null;
             if (leg != null) {
-                JSONObject startLoc = leg.getJSONObject("start_location");
+                JSONObject startLoc = leg.getJSONObject(MAPS_START_LOCATION);
+                JSONObject endLoc = leg.getJSONObject(MAPS_END_LOCATION);
                 if (startLoc != null) {
                     LatLng startPoint = new LatLng(startLoc.getDouble("lat"), startLoc.getDouble("lng"));
                     pointsOnPath.add(startPoint);
 
                     locateMorePointsInSteps(leg, pointsOnPath);
                 }
+                if (endLoc != null) {
+                    endPoint = new LatLng(endLoc.getDouble("lat"), endLoc.getDouble("lng"));
+                }
             }
 
             // Create route object and load with new data
             Route routeObj = new Route(boundsNortheastLat, boundsNortheastLng, boundsSouthwestLat,
-                    boundsSouthwestLng, distance, duration, startAddress, startLocation, endAddress,
-                    endLocation, polylinePoints, pointsOnPath);
+                    boundsSouthwestLng, distance, duration, startAddress, endAddress, polylinePoints,
+                    pointsOnPath, endPoint);
 
             this.routes.add(routeObj);
 
