@@ -22,8 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/cv_maps"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -44,7 +43,7 @@
                             android:id="@+id/tv_card_map_title_minutes"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="{minutes} "
+                            android:text=""
                             android:textColor="#2c9925"
                             android:textSize="28sp" />
 
@@ -53,7 +52,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_toRightOf="@id/tv_card_map_title_minutes"
-                            android:text="to {destination}"
+                            android:text=""
                             android:textSize="28sp" />
 
                         <TextView
@@ -64,8 +63,8 @@
                             android:layout_marginBottom="16dp"
                             android:layout_marginTop="8dp"
                             android:singleLine="false"
-                            android:text="{destination address}"
-                            android:textColor="#bbbbbb"
+                            android:text=""
+                            android:textColor="#7c7c7c"
                             android:textSize="18sp" />
 
                     </RelativeLayout>
@@ -87,10 +86,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:drawablePadding="4dp"
-                            android:text="Get directions via {mode of transit}"
+                            android:text=""
                             android:textColor="#307ee1"
                             android:textSize="18sp" />
-
 
                     </RelativeLayout>
 

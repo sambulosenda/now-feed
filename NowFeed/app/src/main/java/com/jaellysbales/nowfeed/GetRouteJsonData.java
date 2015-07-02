@@ -5,6 +5,8 @@ import android.net.Uri;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -104,11 +106,11 @@ public class GetRouteJsonData extends GetRawData {
             // Retrieve coordinates data
             JSONObject boundsObj = route.getJSONObject(MAPS_BOUNDS);
             JSONObject boundsNortheast = boundsObj.getJSONObject(MAPS_BOUNDS_NE);
-            String boundsNortheastLat = boundsNortheast.getString("lat");
-            String boundsNortheastLng = boundsNortheast.getString("lng");
+            double boundsNortheastLat = boundsNortheast.getDouble("lat");
+            double boundsNortheastLng = boundsNortheast.getDouble("lng");
             JSONObject boundsSouthwest = boundsObj.getJSONObject(MAPS_BOUNDS_SW);
-            String boundsSouthwestLat = boundsSouthwest.getString("lat");
-            String boundsSouthwestLng = boundsSouthwest.getString("lng");
+            double boundsSouthwestLat = boundsSouthwest.getDouble("lat");
+            double boundsSouthwestLng = boundsSouthwest.getDouble("lng");
 
             JSONObject distanceObj = leg.getJSONObject(MAPS_TRIP_DISTANCE);
             String distance = distanceObj.getString("text");
@@ -117,17 +119,24 @@ public class GetRouteJsonData extends GetRawData {
             String duration = durationObj.getString("text");
 
             String startAddress = leg.getString(MAPS_START_ADDRESS);
-            String startLocation = leg.getString(MAPS_START_LOCATION);
             String endAddress = leg.getString(MAPS_END_ADDRESS);
-            String endLocation = leg.getString(MAPS_END_LOCATION);
 
             JSONObject overviewPolylineObj = route.getJSONObject(MAPS_OVERVIEW_POLYLINE);
             String polylinePoints = overviewPolylineObj.getString("points");
+            List<LatLng> pointsOnPath = decodePoly(polylinePoints);
+
+            LatLng endPoint = null;
+            if (leg != null) {
+                JSONObject endLoc = leg.getJSONObject(MAPS_END_LOCATION);
+                if (endLoc != null) {
+                    endPoint = new LatLng(endLoc.getDouble("lat"), endLoc.getDouble("lng"));
+                }
+            }
 
             // Create route object and load with new data
             Route routeObj = new Route(boundsNortheastLat, boundsNortheastLng, boundsSouthwestLat,
-                    boundsSouthwestLng, distance, duration, startAddress, startLocation, endAddress,
-                    endLocation, polylinePoints);
+                    boundsSouthwestLng, distance, duration, startAddress, endAddress, polylinePoints,
+                    pointsOnPath, endPoint);
 
             this.routes.add(routeObj);
 
@@ -137,6 +146,44 @@ public class GetRouteJsonData extends GetRawData {
             jsone.printStackTrace();
             Log.v(LOG_TAG, "Error processing JSON data");
         }
+    }
+
+    /**
+     * Method to decode polyline points
+     * Courtesy : jeffreysambells.com/2010/05/27/decoding-polylines-from-google-maps-direction-api-with-java
+     */
+    private List<LatLng> decodePoly(String encoded) {
+
+        List<LatLng> poly = new ArrayList<LatLng>();
+        int index = 0, len = encoded.length();
+        int lat = 0, lng = 0;
+
+        while (index < len) {
+            int b, shift = 0, result = 0;
+            do {
+                b = encoded.charAt(index++) - 63;
+                result |= (b & 0x1f) << shift;
+                shift += 5;
+            } while (b >= 0x20);
+            int dlat = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+            lat += dlat;
+
+            shift = 0;
+            result = 0;
+            do {
+                b = encoded.charAt(index++) - 63;
+                result |= (b & 0x1f) << shift;
+                shift += 5;
+            } while (b >= 0x20);
+            int dlng = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+            lng += dlng;
+
+            LatLng p = new LatLng((((double) lat / 1E5)),
+                    (((double) lng / 1E5)));
+            poly.add(p);
+        }
+
+        return poly;
     }
 
     private void sendNotification() {

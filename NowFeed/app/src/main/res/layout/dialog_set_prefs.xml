@@ -8,17 +8,17 @@
     <EditText
         android:id="@+id/et_address_home"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:hint="Enter home address"
+        android:layout_height="70dp"
         android:paddingLeft="16dp"
-        android:paddingRight="16dp" />
+        android:paddingRight="16dp"
+        android:text="@string/demo_addr_home" />
 
     <EditText
         android:id="@+id/et_address_work"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:hint="Enter work address"
+        android:layout_height="70dp"
         android:paddingLeft="16dp"
-        android:paddingRight="16dp" />
+        android:paddingRight="16dp"
+        android:text="@string/demo_addr_work" />
 
 </LinearLayout>

@@ -1,26 +1,30 @@
 package com.jaellysbales.nowfeed;
 
+import com.google.android.gms.maps.model.LatLng;
+
+import java.util.List;
+
 /**
  * Created by jaellysbales on 6/29/15.
  */
 public class Route {
-    private String boundsNortheastLat;
-    private String boundsNortheastLng;
-    private String boundsSouthwestLat;
-    private String boundsSouthwestLng;
+    private double boundsNortheastLat;
+    private double boundsNortheastLng;
+    private double boundsSouthwestLat;
+    private double boundsSouthwestLng;
     private String distance;
     private String duration;
     private String startAddress;
-    private String startLocation;
     private String endAddress;
-    private String endLocation;
     private String polylinePoints;
+    private List<LatLng> pointsOnPath;
+    private LatLng endPoint;
     // TODO: Parse and handle subway icons
 
 
-    public Route(String boundsNortheastLat, String boundsNortheastLng, String boundsSouthwestLat,
-                 String boundsSouthwestLng, String distance, String duration, String startAddress,
-                 String startLocation, String endAddress, String endLocation, String polylinePoints) {
+    public Route(double boundsNortheastLat, double boundsNortheastLng, double boundsSouthwestLat,
+                 double boundsSouthwestLng, String distance, String duration, String startAddress,
+                 String endAddress, String polylinePoints, List<LatLng> pointsOnPath, LatLng endPoint) {
         this.boundsNortheastLat = boundsNortheastLat;
         this.boundsNortheastLng = boundsNortheastLng;
         this.boundsSouthwestLat = boundsSouthwestLat;
@@ -28,25 +32,25 @@ public class Route {
         this.distance = distance;
         this.duration = duration;
         this.startAddress = startAddress;
-        this.startLocation = startLocation;
         this.endAddress = endAddress;
-        this.endLocation = endLocation;
         this.polylinePoints = polylinePoints;
+        this.pointsOnPath = pointsOnPath;
+        this.endPoint = endPoint;
     }
 
-    public String getBoundsNortheastLat() {
+    public double getBoundsNortheastLat() {
         return boundsNortheastLat;
     }
 
-    public String getBoundsNortheastLng() {
+    public double getBoundsNortheastLng() {
         return boundsNortheastLng;
     }
 
-    public String getBoundsSouthwestLat() {
+    public double getBoundsSouthwestLat() {
         return boundsSouthwestLat;
     }
 
-    public String getBoundsSouthwestLng() {
+    public double getBoundsSouthwestLng() {
         return boundsSouthwestLng;
     }
 
@@ -62,20 +66,20 @@ public class Route {
         return startAddress;
     }
 
-    public String getStartLocation() {
-        return startLocation;
-    }
-
     public String getEndAddress() {
         return endAddress;
     }
 
-    public String getEndLocation() {
-        return endLocation;
-    }
-
     public String getPolylinePoints() {
         return polylinePoints;
+    }
+
+    public List<LatLng> getPointsOnPath() {
+        return pointsOnPath;
+    }
+
+    public LatLng getEndPoint() {
+        return endPoint;
     }
 
     @Override
@@ -88,10 +92,10 @@ public class Route {
                 ", distance='" + distance + '\'' +
                 ", duration='" + duration + '\'' +
                 ", startAddress='" + startAddress + '\'' +
-                ", startLocation='" + startLocation + '\'' +
                 ", endAddress='" + endAddress + '\'' +
-                ", endLocation='" + endLocation + '\'' +
                 ", polylinePoints='" + polylinePoints + '\'' +
+                ", pointsOnPath=" + pointsOnPath +
+                ", endPoint=" + endPoint +
                 '}';
     }
 }

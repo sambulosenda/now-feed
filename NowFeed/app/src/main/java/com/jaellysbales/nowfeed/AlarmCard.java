@@ -1,12 +1,16 @@
 package com.jaellysbales.nowfeed;
 
+import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.provider.AlarmClock;
 import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
@@ -27,52 +31,45 @@ public class AlarmCard {
     public static View createAlarmView(LayoutInflater inflater){
         alarmView = inflater.inflate(R.layout.alarm_card, null);
 
-        Button buttonSet = (Button) alarmView.findViewById(R.id.set_alarm_button);
-        buttonSet.setOnClickListener(SetOnClickListener);
+        ImageButton btnCreate = (ImageButton) alarmView.findViewById(R.id.create_alarm_btn);
+        btnCreate.setOnClickListener(createAlarmListener);
 
         Button buttonView = (Button) alarmView.findViewById(R.id.view_alarms_button);
         buttonView.setOnClickListener(ViewOnClickListener);
 
-
-        //showNextAlarm();
-
-        //todo: create timePicker in dialogue box
-        timePicker = (TimePicker) alarmView.findViewById(R.id.time_picker);
-        timePicker.setCurrentMinute(00);
-        timePicker.setCurrentHour(12);
-        timePicker.setOnTimeChangedListener(onTimeChanged);
-
-        Button buttonSelectTime = (Button) alarmView.findViewById(R.id.select_time_button);
-        buttonSelectTime.setOnClickListener(selectOnClickListener);
-
-
+        showNextAlarm();
 
         return alarmView;
     }
 
-    public static View.OnClickListener selectOnClickListener = new View.OnClickListener() {
+    public static View.OnClickListener createAlarmListener = new View.OnClickListener() {
         @Override
-        public void onClick(View view) {
-            TextView selectTimeTextView = (TextView) alarmView.findViewById(R.id.select_time_text_view);
-            //TimePicker timePicker = (TimePicker) alarmView.findViewById(R.id.time_picker);
+        public void onClick(final View view) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(alarmView.getContext());
+            builder.setTitle("Add Alarm");
+            builder.setMessage("Set Alarm Time");
+            timePicker = new TimePicker(alarmView.getContext());
+            timePicker.setCurrentMinute(00);
+            timePicker.setCurrentHour(12);
+            builder.setView(timePicker);
 
-            hour = timePicker.getCurrentHour();
-            minutes = timePicker.getCurrentMinute();
+            //timePicker.setOnTimeChangedListener(onTimeChanged);
+            builder.setPositiveButton("Add alarm", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
 
-            selectTimeTextView.setText("Select time - " + hour + ":" + minutes);
+                    hour = timePicker.getCurrentHour();
+                    minutes = timePicker.getCurrentMinute();
 
-        }
-    };
+                    createAlarm(view.getContext(), "New Alarm", hour, minutes);
 
-    public static TimePicker.OnTimeChangedListener onTimeChanged = new TimePicker.OnTimeChangedListener() {
-        @Override
-        public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
-            TextView selectTimeTextView = (TextView) alarmView.findViewById(R.id.select_time_text_view);
+                    showNextAlarm();
+                }
+            });
 
-            hour = hourOfDay;
-            minutes = minute;
+            builder.setNegativeButton("Cancel", null);
 
-            selectTimeTextView.setText("Select time - " + hourOfDay + ":" + minute);
+            builder.create().show();
         }
     };
 
@@ -86,38 +83,33 @@ public class AlarmCard {
         }
     }
 
-    public static View.OnClickListener SetOnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-
-            createAlarm(view.getContext(), "New Alarm", hour, minutes);
-
-            // this will show next upcoming active alarm
-            String nextAlarm = Settings.System.getString(alarmView.getContext().getContentResolver(),
-                    Settings.System.NEXT_ALARM_FORMATTED);
-
-            TextView alarmsTextview = (TextView) alarmView.findViewById(R.id.alarms_text_view);
-            alarmsTextview.setText("next alarm : " + nextAlarm);
-        }
-    };
-
     public static  View.OnClickListener ViewOnClickListener = new View.OnClickListener() {
-
         @Override
         public void onClick(View view) {
 
-            Intent i = new Intent(AlarmClock.ACTION_SET_ALARM);
+            //Intent i = new Intent(AlarmClock.ACTION_SET_ALARM); //Works for s3
+
+            Intent i = new Intent(AlarmClock.ACTION_SHOW_ALARMS);//works for s5
             view.getContext().startActivity(i);
         }
     };
 
     public static void showNextAlarm(){
         // this will show next upcoming active alarm
-        String nextAlarm = Settings.System.getString(alarmView.getContext().getContentResolver(),
-                Settings.System.NEXT_ALARM_FORMATTED);
+        String nextAlarm;
+        TextView alarmsTextView = (TextView) alarmView.findViewById(R.id.alarms_text_view);
 
-        TextView alarmsTextview = (TextView) alarmView.findViewById(R.id.alarms_text_view);
-        alarmsTextview.setText("next alarm : " + nextAlarm);
+        if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            /** use getNextAlarmClock() **/
+            AlarmManager am = (AlarmManager) alarmView.getContext().getSystemService(Context.ALARM_SERVICE);
+            nextAlarm = am.getNextAlarmClock().toString();
+        } else {
+            /** use Settings.System.NEXT_ALARM_FORMATTED **/
+            nextAlarm = Settings.System.getString(alarmView.getContext().getContentResolver(),
+                    Settings.System.NEXT_ALARM_FORMATTED);
+        }
+
+        alarmsTextView.setText(nextAlarm);
     }
 
 }
