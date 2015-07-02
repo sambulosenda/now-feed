@@ -123,18 +123,11 @@ public class GetRouteJsonData extends GetRawData {
 
             JSONObject overviewPolylineObj = route.getJSONObject(MAPS_OVERVIEW_POLYLINE);
             String polylinePoints = overviewPolylineObj.getString("points");
+            List<LatLng> pointsOnPath = decodePoly(polylinePoints);
 
-            List<LatLng> pointsOnPath = new ArrayList<>();
             LatLng endPoint = null;
             if (leg != null) {
-                JSONObject startLoc = leg.getJSONObject(MAPS_START_LOCATION);
                 JSONObject endLoc = leg.getJSONObject(MAPS_END_LOCATION);
-                if (startLoc != null) {
-                    LatLng startPoint = new LatLng(startLoc.getDouble("lat"), startLoc.getDouble("lng"));
-                    pointsOnPath.add(startPoint);
-
-                    locateMorePointsInSteps(leg, pointsOnPath);
-                }
                 if (endLoc != null) {
                     endPoint = new LatLng(endLoc.getDouble("lat"), endLoc.getDouble("lng"));
                 }
@@ -155,25 +148,42 @@ public class GetRouteJsonData extends GetRawData {
         }
     }
 
-    private void locateMorePointsInSteps(JSONObject jsonObject, List<LatLng> pointsList) {
-        try {
-            JSONArray stepsInLeg = jsonObject.getJSONArray("steps");
-            if (stepsInLeg != null) {
-                JSONObject step = stepsInLeg.getJSONObject(0);
-                if (step != null) {
-                    JSONObject endLoc = step.getJSONObject("end_location");
-                    if (endLoc != null) {
-                        LatLng startPoint = new LatLng(endLoc.getDouble("lat"), endLoc.getDouble("lng"));
-                        pointsList.add(startPoint);
+    /**
+     * Method to decode polyline points
+     * Courtesy : jeffreysambells.com/2010/05/27/decoding-polylines-from-google-maps-direction-api-with-java
+     */
+    private List<LatLng> decodePoly(String encoded) {
 
-                        locateMorePointsInSteps(step, pointsList);
-                    }
-                }
-            }
+        List<LatLng> poly = new ArrayList<LatLng>();
+        int index = 0, len = encoded.length();
+        int lat = 0, lng = 0;
 
-        } catch (JSONException e) {
-            e.printStackTrace();
+        while (index < len) {
+            int b, shift = 0, result = 0;
+            do {
+                b = encoded.charAt(index++) - 63;
+                result |= (b & 0x1f) << shift;
+                shift += 5;
+            } while (b >= 0x20);
+            int dlat = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+            lat += dlat;
+
+            shift = 0;
+            result = 0;
+            do {
+                b = encoded.charAt(index++) - 63;
+                result |= (b & 0x1f) << shift;
+                shift += 5;
+            } while (b >= 0x20);
+            int dlng = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+            lng += dlng;
+
+            LatLng p = new LatLng((((double) lat / 1E5)),
+                    (((double) lng / 1E5)));
+            poly.add(p);
         }
+
+        return poly;
     }
 
     private void sendNotification() {

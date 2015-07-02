@@ -28,7 +28,7 @@
                     android:layout_height="wrap_content"
                     android:text=""
                     android:textColor="#2c9925"
-                    android:textSize="28sp"/>
+                    android:textSize="28sp" />
 
                 <TextView
                     android:id="@+id/tv_card_map_title_destination"
@@ -36,7 +36,7 @@
                     android:layout_height="wrap_content"
                     android:layout_toRightOf="@id/tv_card_map_title_minutes"
                     android:text=""
-                    android:textSize="28sp"/>
+                    android:textSize="28sp" />
 
                 <TextView
                     android:id="@+id/tv_card_map_subhead"
@@ -48,7 +48,7 @@
                     android:singleLine="false"
                     android:text=""
                     android:textColor="#7c7c7c"
-                    android:textSize="18sp"/>
+                    android:textSize="18sp" />
 
             </RelativeLayout>
 
@@ -71,7 +71,7 @@
                     android:drawablePadding="4dp"
                     android:text=""
                     android:textColor="#307ee1"
-                    android:textSize="18sp"/>
+                    android:textSize="18sp" />
 
             </RelativeLayout>
 

@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -82,9 +83,10 @@ public class MapsActivity extends FragmentActivity
     private void drawRoutePolylines() {
         if (routes != null && googleMap != null) {
             Route chosenRoute = routes.get(0);
-            PolylineOptions rectOptions = new PolylineOptions();
-            rectOptions.addAll(chosenRoute.getPointsOnPath());
-
+            PolylineOptions rectOptions = new PolylineOptions().addAll(chosenRoute.getPointsOnPath())
+                    .color(Color.parseColor("#FF307EE1"))
+                            .width(10);
+//            rectOptions.addAll(chosenRoute.getPointsOnPath());
             // Get back the mutable Polyline
             Polyline polyline = googleMap.addPolyline(rectOptions);
         }
