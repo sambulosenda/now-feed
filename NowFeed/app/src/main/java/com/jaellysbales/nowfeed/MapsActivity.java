@@ -118,7 +118,7 @@ public class MapsActivity extends FragmentActivity
                 tv_card_map_title_destination.setText(" to work");
             }
             tv_card_map_subhead.setText(routes.get(0).getEndAddress());
-            tv_card_map_directions.setText("Get subway directions"); // TODO: Allow for more modes of transit
+            tv_card_map_directions.setText("Get directions"); // TODO: Allow for more modes of transit
         }
     }
 
