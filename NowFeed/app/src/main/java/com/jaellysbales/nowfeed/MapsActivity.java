@@ -42,8 +42,8 @@ public class MapsActivity extends FragmentActivity
 
     private GoogleMap googleMap;
     private LocationProvider locationProvider;
-    private LatLng start = new LatLng(40.742790, -73.935558); // start point for Directions API test (C4Q)
-    private LatLng end = new LatLng(40.741781, -74.004501); // end point for Directions API test (Googz)
+    private LatLng startLatLng = new LatLng(40.742790, -73.935558); // startLatLng point for Directions API test (C4Q)
+    private LatLng endLatLng = new LatLng(40.741781, -74.004501); // endLatLng point for Directions API test (Googz)
 
     private TextView tv_card_map_title_minutes;
     private TextView tv_card_map_title_destination;
@@ -96,11 +96,13 @@ public class MapsActivity extends FragmentActivity
                 mMapRouteMessageReceiver,
                 new IntentFilter(GetRouteJsonData.MAP_ROUTE_DATA_AVAILABLE));
 
-        getRouteJsonData = new GetRouteJsonData(start.latitude, start.longitude,
+        getRouteJsonData = new GetRouteJsonData(startLatLng.latitude, startLatLng.longitude,
                 endAddress);
         getRouteJsonData.execute();
 
-        // retrieve json values and set textviews, set retrieve end latlng
+//        setTextViewsToJsonData();
+
+        // retrieve json values and set textviews, set retrieve endLatLng latlng
 
         tv_card_map_directions.setOnClickListener(mapDirectionsListener);
     }
@@ -120,7 +122,7 @@ public class MapsActivity extends FragmentActivity
             MapsActivity.this.googleMap = googleMap;
 
             MarkerOptions options = new MarkerOptions()
-                    .position(end)
+                    .position(endLatLng)
                     .title("Google");
             googleMap.addMarker(options);
         }
@@ -141,13 +143,12 @@ public class MapsActivity extends FragmentActivity
         // TODO: CLEAN THIS UP
         double currentLatitude = location.getLatitude();
         double currentLongitude = location.getLongitude();
-        LatLng latLng = new LatLng(currentLatitude, currentLongitude);
-
+        startLatLng = new LatLng(currentLatitude, currentLongitude);
 
         // Set position and zoom of camera on new location [use latlngbounds]
         if (googleMap != null) {
             CameraPosition cameraPosition = new CameraPosition.Builder()
-                    .target(latLng)
+                    .target(startLatLng)
                     .zoom(16)
                     .build();
             googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
@@ -158,14 +159,14 @@ public class MapsActivity extends FragmentActivity
     public View.OnClickListener mapDirectionsListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (start != null && end != null) {
+            if (startLatLng != null && endLatLng != null) {
                 String uri = "https://maps.google.com/maps?f=d&daddr=" +
-                        Double.toString(end.latitude) + "," + Double.toString(end.longitude); // change this
+                        Double.toString(endLatLng.latitude) + "," + Double.toString(endLatLng.longitude); // change this
                 Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
                 startActivity(i);
-            } else if (start == null) {
+            } else if (startLatLng == null) {
                 Toast.makeText(MapsActivity.this, "No origin/location set", Toast.LENGTH_SHORT).show();
-            } else if (end == null) {
+            } else if (endLatLng == null) {
                 Toast.makeText(MapsActivity.this, "No destination set", Toast.LENGTH_SHORT).show();
             }
         }
@@ -232,6 +233,10 @@ public class MapsActivity extends FragmentActivity
 
         builder.setView(layout);
         return builder.create();
+    }
+
+    public void setTextViewsToJsonData() {
+        tv_card_map_title_minutes.setText(routes.get(0).getDuration());
     }
 
     @Override
