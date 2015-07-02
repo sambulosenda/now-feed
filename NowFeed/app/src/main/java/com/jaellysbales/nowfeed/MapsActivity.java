@@ -120,6 +120,9 @@ public class MapsActivity extends FragmentActivity
         cardsLayout.addView(AlarmCard.createAlarmView(inflater));
         cardsLayout.addView(TodoCard.createTodoView(inflater));
 
+        cardsLayout.addView(WeatherCard.createWeatherView(inflater));
+
+
     }
 
     public void initializeViews() {
