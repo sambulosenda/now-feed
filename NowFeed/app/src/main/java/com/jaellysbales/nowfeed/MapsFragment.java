@@ -87,9 +87,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
         tv_card_map_directions = (TextView) view.findViewById(R.id.tv_card_map_directions);
 
         locationProvider = new LocationProvider(getActivity(), this);
-        DirectionsProvider directionsProvider = new DirectionsProvider(getActivity());
+        //DirectionsProvider directionsProvider = new DirectionsProvider(getActivity());
 
-        directionsProvider.makeUrl(start.latitude, start.longitude, end.latitude, end.longitude);
+        //directionsProvider.makeUrl(start.latitude, start.longitude, end.latitude, end.longitude);
 
         // Launch intent for user to get directions from current location to destination
         tv_card_map_directions.setOnClickListener(tv_map_directions_listener);

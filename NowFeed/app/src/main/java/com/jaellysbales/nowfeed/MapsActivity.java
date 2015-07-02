@@ -10,12 +10,10 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.view.LayoutInflater;
 import android.view.View;
-
-import android.widget.ListView;
-
 import android.widget.EditText;
-
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,6 +52,7 @@ public class MapsActivity extends FragmentActivity
     private String addressHome;
     private String addressWork;
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,25 +86,15 @@ public class MapsActivity extends FragmentActivity
 
         tv_card_map_directions.setOnClickListener(mapDirectionsListener);
 
-        ListView cardListView = (ListView) findViewById(R.id.card_list_view);
-        cardListView.setAdapter(new CardAdapter(MapsActivity.this));
+//        ListView cardListView = (ListView) findViewById(R.id.card_list_view);
+//        cardListView.setAdapter(new CardAdapter(MapsActivity.this));
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        //populating other views into linearlayout
+        LinearLayout cardsLayout = (LinearLayout) findViewById(R.id.cards_stored_linear_layout);
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        cardsLayout.addView(AlarmCard.createAlarmView(inflater));
+        cardsLayout.addView(TodoCard.createTodoView(inflater));
 
     }
 

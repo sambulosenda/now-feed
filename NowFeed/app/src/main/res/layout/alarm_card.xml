@@ -33,6 +33,7 @@ card_view:cardCornerRadius="1dp">
     <Button
         android:id="@+id/select_time_button"
         android:text="select time"
+        android:visibility="invisible"
         android:layout_weight="1"
         android:layout_width="match_parent"
         android:layout_height="0dp" />

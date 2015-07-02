@@ -18,6 +18,7 @@ public class AlarmCard {
     private static View alarmView;
     private static int hour;
     private static int minutes;
+    private static TimePicker timePicker;
 
     public AlarmCard(View alarmView){
         this.alarmView = alarmView;
@@ -33,8 +34,10 @@ public class AlarmCard {
         buttonView.setOnClickListener(ViewOnClickListener);
 
 
+        //showNextAlarm();
+
         //todo: create timePicker in dialogue box
-        TimePicker timePicker = (TimePicker) alarmView.findViewById(R.id.time_picker);
+        timePicker = (TimePicker) alarmView.findViewById(R.id.time_picker);
         timePicker.setCurrentMinute(00);
         timePicker.setCurrentHour(12);
         timePicker.setOnTimeChangedListener(onTimeChanged);
@@ -42,12 +45,7 @@ public class AlarmCard {
         Button buttonSelectTime = (Button) alarmView.findViewById(R.id.select_time_button);
         buttonSelectTime.setOnClickListener(selectOnClickListener);
 
-        // this will show next upcoming active alarm
-        String nextAlarm = Settings.System.getString(alarmView.getContext().getContentResolver(),
-                Settings.System.NEXT_ALARM_FORMATTED);
 
-        TextView alarmsTextview = (TextView) alarmView.findViewById(R.id.alarms_text_view);
-        alarmsTextview.setText("next alarm : " + nextAlarm);
 
         return alarmView;
     }
@@ -56,7 +54,7 @@ public class AlarmCard {
         @Override
         public void onClick(View view) {
             TextView selectTimeTextView = (TextView) alarmView.findViewById(R.id.select_time_text_view);
-            TimePicker timePicker = (TimePicker) alarmView.findViewById(R.id.time_picker);
+            //TimePicker timePicker = (TimePicker) alarmView.findViewById(R.id.time_picker);
 
             hour = timePicker.getCurrentHour();
             minutes = timePicker.getCurrentMinute();
@@ -75,7 +73,6 @@ public class AlarmCard {
             minutes = minute;
 
             selectTimeTextView.setText("Select time - " + hourOfDay + ":" + minute);
-
         }
     };
 
@@ -93,8 +90,14 @@ public class AlarmCard {
         @Override
         public void onClick(View view) {
 
-            createAlarm(view.getContext(),"New Alarm", hour, minutes);
+            createAlarm(view.getContext(), "New Alarm", hour, minutes);
 
+            // this will show next upcoming active alarm
+            String nextAlarm = Settings.System.getString(alarmView.getContext().getContentResolver(),
+                    Settings.System.NEXT_ALARM_FORMATTED);
+
+            TextView alarmsTextview = (TextView) alarmView.findViewById(R.id.alarms_text_view);
+            alarmsTextview.setText("next alarm : " + nextAlarm);
         }
     };
 
@@ -107,5 +110,14 @@ public class AlarmCard {
             view.getContext().startActivity(i);
         }
     };
+
+    public static void showNextAlarm(){
+        // this will show next upcoming active alarm
+        String nextAlarm = Settings.System.getString(alarmView.getContext().getContentResolver(),
+                Settings.System.NEXT_ALARM_FORMATTED);
+
+        TextView alarmsTextview = (TextView) alarmView.findViewById(R.id.alarms_text_view);
+        alarmsTextview.setText("next alarm : " + nextAlarm);
+    }
 
 }

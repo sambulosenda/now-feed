@@ -52,9 +52,9 @@ public class MapsCard implements OnMapReadyCallback,
         //setUpMapIfNeeded(activity);
 
         locationProvider = new LocationProvider(mapsView.getContext(), null);
-        DirectionsProvider directionsProvider = new DirectionsProvider(mapsView.getContext());
+        //DirectionsProvider directionsProvider = new DirectionsProvider(mapsView.getContext());
 
-        directionsProvider.makeUrl(start.latitude, start.longitude, end.latitude, end.longitude);
+        //directionsProvider.makeUrl(start.latitude, start.longitude, end.latitude, end.longitude);
 
         // Launch intent for user to get directions from current location to destination
         tv_card_map_directions.setOnClickListener(tv_map_directions_listener);

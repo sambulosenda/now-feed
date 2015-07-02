@@ -6,4 +6,8 @@
     <string name="ok">OK</string>
     <string name="dialog_title">Set addresses</string>
 
+
+    <!--Todo: DO NOT COMMIT THIS -->
+    <string name="PUT_YOUR_KEY_HERE">AIzaSyCsltXYb_w-qLh1bWa9FxB1-VRHl5jojJ4</string>
+
 </resources>

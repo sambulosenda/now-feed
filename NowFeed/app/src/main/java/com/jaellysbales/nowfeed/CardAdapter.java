@@ -20,6 +20,7 @@ public class CardAdapter extends BaseAdapter {
     private Activity activity;
     private List<Fragment> cards;
     private Context context;
+    private List<View> viewCards;
 
     public CardAdapter(Activity activity, List<Fragment> cards) {
         inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -35,13 +36,16 @@ public class CardAdapter extends BaseAdapter {
     @Override
     public int getCount() {// uses get count to determine how many items to have in the list
 //        return cards.size();
-        return 1;
+
+        return 2;
+
     } // shows how many items are in the list view. needs updating
+
 
     @Override
     public Object getItem(int i) {
 //        return cards.get(i);
-        return 1;
+        return 2;
     }
 
     @Override
@@ -76,7 +80,14 @@ public class CardAdapter extends BaseAdapter {
 //
 //        return view;
 
-        return AlarmCard.createAlarmView(inflater);
+        if(i == 0){
+            return AlarmCard.createAlarmView(inflater);
+        }else if (i == 1) {
+            return TodoCard.createTodoView(inflater);
+        } else {
+            return view;
+        }
+
     }
 
     static class ViewHolder {
