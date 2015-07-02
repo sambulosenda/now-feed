@@ -5,6 +5,8 @@ import android.net.Uri;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -124,10 +126,21 @@ public class GetRouteJsonData extends GetRawData {
             JSONObject overviewPolylineObj = route.getJSONObject(MAPS_OVERVIEW_POLYLINE);
             String polylinePoints = overviewPolylineObj.getString("points");
 
+            List<LatLng> pointsOnPath = new ArrayList<>();
+            if (leg != null) {
+                JSONObject startLoc = leg.getJSONObject("start_location");
+                if (startLoc != null) {
+                    LatLng startPoint = new LatLng(startLoc.getDouble("lat"), startLoc.getDouble("lng"));
+                    pointsOnPath.add(startPoint);
+
+                    locateMorePointsInSteps(leg, pointsOnPath);
+                }
+            }
+
             // Create route object and load with new data
             Route routeObj = new Route(boundsNortheastLat, boundsNortheastLng, boundsSouthwestLat,
                     boundsSouthwestLng, distance, duration, startAddress, startLocation, endAddress,
-                    endLocation, polylinePoints);
+                    endLocation, polylinePoints, pointsOnPath);
 
             this.routes.add(routeObj);
 
@@ -136,6 +149,27 @@ public class GetRouteJsonData extends GetRawData {
         } catch (JSONException jsone) {
             jsone.printStackTrace();
             Log.v(LOG_TAG, "Error processing JSON data");
+        }
+    }
+
+    private void locateMorePointsInSteps(JSONObject jsonObject, List<LatLng> pointsList) {
+        try {
+            JSONArray stepsInLeg = jsonObject.getJSONArray("steps");
+            if (stepsInLeg != null) {
+                JSONObject step = stepsInLeg.getJSONObject(0);
+                if (step != null) {
+                    JSONObject endLoc = step.getJSONObject("end_location");
+                    if (endLoc != null) {
+                        LatLng startPoint = new LatLng(endLoc.getDouble("lat"), endLoc.getDouble("lng"));
+                        pointsList.add(startPoint);
+
+                        locateMorePointsInSteps(step, pointsList);
+                    }
+                }
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 

@@ -26,6 +26,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.List;
 
@@ -42,7 +44,7 @@ public class MapsActivity extends FragmentActivity
 
     private GoogleMap googleMap;
     private LocationProvider locationProvider;
-    private LatLng startLatLng = new LatLng(40.742790, -73.935558); // startLatLng point for Directions API test (C4Q)
+    private LatLng startLatLng = null; // new LatLng(40.742790, -73.935558); // startLatLng point for Directions API test (C4Q)
     private LatLng endLatLng = new LatLng(40.741781, -74.004501); // endLatLng point for Directions API test (Googz)
 
     private TextView tv_card_map_title_minutes;
@@ -63,8 +65,23 @@ public class MapsActivity extends FragmentActivity
         public void onReceive(Context context, Intent intent) {
             routes = getRouteJsonData.getRoutes();
             Log.d("ROUTES", "Received routes: " + routes.size());
+            drawRoutePolylines();
         }
     };
+
+    private void drawRoutePolylines() {
+        if (routes != null && googleMap != null) {
+            Route chosenRoute = routes.get(0);
+            PolylineOptions rectOptions = new PolylineOptions();
+            rectOptions.addAll(chosenRoute.getPointsOnPath());
+
+            //TODO: uncomment this if closure is required for polyline
+//                rectOptions.add(chosenRoute.getPointsOnPath().get(0));
+
+            // Get back the mutable Polyline
+            Polyline polyline = googleMap.addPolyline(rectOptions);
+        }
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -87,24 +104,14 @@ public class MapsActivity extends FragmentActivity
         locationProvider = new LocationProvider(this, this);
 
         loadPreferences();
-//        endAddress = addressHome; // TODO: Allow toggle
 
-        endAddress = "350 5th Avenue New York NY 10118";
+//        endAddress = "350 5th Avenue New York NY 10118";
 
         // register our receiver with LocalBroadcastManager
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 mMapRouteMessageReceiver,
                 new IntentFilter(GetRouteJsonData.MAP_ROUTE_DATA_AVAILABLE));
 
-        getRouteJsonData = new GetRouteJsonData(startLatLng.latitude, startLatLng.longitude,
-                endAddress);
-        getRouteJsonData.execute();
-
-//        setTextViewsToJsonData();
-
-        // retrieve json values and set textviews, set retrieve endLatLng latlng
-
-        tv_card_map_directions.setOnClickListener(mapDirectionsListener);
     }
 
     public void initializeViews() {
@@ -143,7 +150,13 @@ public class MapsActivity extends FragmentActivity
         // TODO: CLEAN THIS UP
         double currentLatitude = location.getLatitude();
         double currentLongitude = location.getLongitude();
-        startLatLng = new LatLng(currentLatitude, currentLongitude);
+
+        LatLng newPosition = new LatLng(currentLatitude, currentLongitude);
+
+        if (startLatLng == null) {
+            startLatLng = newPosition;
+            getRouteData();
+        }
 
         // Set position and zoom of camera on new location [use latlngbounds]
         if (googleMap != null) {
@@ -153,6 +166,30 @@ public class MapsActivity extends FragmentActivity
                     .build();
             googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         }
+    }
+
+    private void getRouteData() {
+        endAddress = addressHome; // TODO: if/else set destination morning vs evening
+
+        if (startLatLng == null) {
+            Log.d("GET ROUTE DATA", "No start location yet");
+            return;
+        }
+
+        if (endAddress == null) {
+            Log.d("GET ROUTE DATA", "No end location yet");
+            return;
+        }
+
+        getRouteJsonData = new GetRouteJsonData(startLatLng.latitude, startLatLng.longitude,
+                endAddress);
+        getRouteJsonData.execute();
+
+//        setTextViewsToJsonData();
+
+        // retrieve json values and set textviews, set retrieve endLatLng latlng
+
+        tv_card_map_directions.setOnClickListener(mapDirectionsListener);
     }
 
     // Launch intent for user to get directions from current location to destination
@@ -201,8 +238,9 @@ public class MapsActivity extends FragmentActivity
             Toast.makeText(MapsActivity.this, "Data loaded successfully", Toast.LENGTH_SHORT).show();
             addressHome = prefAddressHome;
             addressWork = prefAddressWork;
-            Toast.makeText(MapsActivity.this, "Home: " + addressHome + "\n" + "Work: " +
-                    addressWork, Toast.LENGTH_SHORT).show();
+            getRouteData();
+//            Toast.makeText(MapsActivity.this, "Home: " + addressHome + "\n" + "Work: " +
+//                    addressWork, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -221,6 +259,8 @@ public class MapsActivity extends FragmentActivity
                 addressHome = etAddressHome.getText().toString().trim();
                 addressWork = etAddressWork.getText().toString().trim();
                 setPreferences(addressHome, addressWork);
+
+                getRouteData();
             }
         });
 

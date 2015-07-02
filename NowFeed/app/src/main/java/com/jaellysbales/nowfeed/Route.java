@@ -1,5 +1,9 @@
 package com.jaellysbales.nowfeed;
 
+import com.google.android.gms.maps.model.LatLng;
+
+import java.util.List;
+
 /**
  * Created by jaellysbales on 6/29/15.
  */
@@ -15,12 +19,14 @@ public class Route {
     private String endAddress;
     private String endLocation;
     private String polylinePoints;
+    private List<LatLng> pointsOnPath;
     // TODO: Parse and handle subway icons
 
 
     public Route(String boundsNortheastLat, String boundsNortheastLng, String boundsSouthwestLat,
                  String boundsSouthwestLng, String distance, String duration, String startAddress,
-                 String startLocation, String endAddress, String endLocation, String polylinePoints) {
+                 String startLocation, String endAddress, String endLocation, String polylinePoints,
+                 List<LatLng> pointsOnPath) {
         this.boundsNortheastLat = boundsNortheastLat;
         this.boundsNortheastLng = boundsNortheastLng;
         this.boundsSouthwestLat = boundsSouthwestLat;
@@ -32,6 +38,7 @@ public class Route {
         this.endAddress = endAddress;
         this.endLocation = endLocation;
         this.polylinePoints = polylinePoints;
+        this.pointsOnPath = pointsOnPath;
     }
 
     public String getBoundsNortheastLat() {
@@ -78,6 +85,10 @@ public class Route {
         return polylinePoints;
     }
 
+    public List<LatLng> getPointsOnPath() {
+        return pointsOnPath;
+    }
+
     @Override
     public String toString() {
         return "Route{" +
@@ -92,6 +103,7 @@ public class Route {
                 ", endAddress='" + endAddress + '\'' +
                 ", endLocation='" + endLocation + '\'' +
                 ", polylinePoints='" + polylinePoints + '\'' +
+                ", pointsOnPath'='" + pointsOnPath + '\'' +
                 '}';
     }
 }
