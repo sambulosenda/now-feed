@@ -14,4 +14,7 @@
     <string name="project_directions_key">Atest</string>
     <string name="directions_api_key">@string/jb_directions_key</string>
 
+    <string name="placeholder">Placeholder Text</string>
+    <string name="icon">icon</string>
+
 </resources>

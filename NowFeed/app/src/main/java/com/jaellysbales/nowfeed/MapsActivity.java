@@ -11,12 +11,14 @@ import android.content.SharedPreferences;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
-import android.view.LayoutInflater;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -119,11 +121,76 @@ public class MapsActivity extends FragmentActivity
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         cardsLayout.addView(AlarmCard.createAlarmView(inflater));
         cardsLayout.addView(TodoCard.createTodoView(inflater));
-
         cardsLayout.addView(WeatherCard.createWeatherView(inflater));
+
+        //Weather Stuff
+        final WeatherFetcher weatherFetcher = new WeatherFetcher();
+        final TextView weatherString = (TextView) findViewById(R.id.weatherString);
+        final TextView windData = (TextView) findViewById(R.id.windData);
+        final TextView humidityTv = (TextView) findViewById(R.id.humidity);
+        final TextView cityView = (TextView) findViewById(R.id.cityView);
+        final TextView degrees = (TextView) findViewById(R.id.degrees);
+        final ImageView weatherIcon = (ImageView) findViewById(R.id.weatherIcon);
+        final TextView low = (TextView)findViewById(R.id.low);
+
+//        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+//        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 1, this);
+
+
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+
+                String temp;
+                temp = String.valueOf(weatherFetcher.getTemp());
+                Log.d("current temp:", String.valueOf(temp));
+//                degrees.setText(temp + "°");
+                Log.d("temp: ", String.valueOf(temp));
+                degrees.setText("Foo");
+
+
+                String city = weatherFetcher.getCity();
+                Log.v("post city", city);
+                cityView.setText(city);
+
+                String desc = weatherFetcher.getDescription();
+                Log.d("description is: ", desc);
+                weatherString.setText(desc);
+
+                double maxTemp = weatherFetcher.getMaxTemp();
+                double minTemp = weatherFetcher.getMinTemp();
+                low.setText("Hi : " + (int)maxTemp +  "° \n\nLow :" + (int)minTemp + "°");
+
+                double wind = weatherFetcher.getWind();
+                windData.setText("Wind: " + String.valueOf(wind) + "mph");
+
+                int humidity = weatherFetcher.getHumidity();
+                humidityTv.setText("Humidity: " + String.valueOf(humidity) + "%");
+
+                int id;
+                id = weatherFetcher.getId();
+                if ((id >= 200) || (id <= 232)){
+                    weatherIcon.setBackgroundResource(R.drawable.thunderstorm);
+                }
+                if ((id >= 300) || (id <= 321)){
+                    weatherIcon.setBackgroundResource(R.drawable.lightrain);
+                }
+                if ((id >= 500) || (id <= 531)){
+                    weatherIcon.setBackgroundResource(R.drawable.moderaterain);
+                }
+                if ((id>=600) || (id <= 622)) {
+                    weatherIcon.setBackgroundResource(R.drawable.snow);
+                }
+                if ((id >= 701) || (id <= 781)){
+                    weatherIcon.setBackgroundResource(R.drawable.mist);
+                }
+            }
+        };
+        new Handler().postDelayed(runnable, 3000);
 
 
     }
+
 
     public void initializeViews() {
         tv_card_map_title_minutes = (TextView) findViewById(R.id.tv_card_map_title_minutes);
@@ -253,6 +320,8 @@ public class MapsActivity extends FragmentActivity
         builder.setView(layout);
         return builder.create();
     }
+
+
 
 
     @Override

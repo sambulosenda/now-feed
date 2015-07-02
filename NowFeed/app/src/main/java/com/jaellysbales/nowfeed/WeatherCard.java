@@ -3,7 +3,6 @@ package com.jaellysbales.nowfeed;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,43 +28,19 @@ private static View weatherView;
         TextView windData = (TextView) weatherView.findViewById(R.id.windData);
         TextView humidityTv = (TextView) weatherView.findViewById(R.id.humidity);
         final TextView cityView = (TextView) weatherView.findViewById(R.id.cityView);
-        final TextView degrees = (TextView) weatherView.findViewById(R.id.degrees);
+        TextView degrees = (TextView) weatherView.findViewById(R.id.degrees);
         ImageView weatherIcon = (ImageView) weatherView.findViewById(R.id.weatherIcon);
-        TextView dayOne = (TextView) weatherView.findViewById(R.id.dayOne);
-        TextView dayTwo = (TextView) weatherView.findViewById(R.id.dayTwo);
-        TextView dayThree = (TextView) weatherView.findViewById(R.id.dayThree);
-        TextView dayFour = (TextView) weatherView.findViewById(R.id.dayFour);
-        TextView dayFive = (TextView) weatherView.findViewById(R.id.dayFive);
+        final TextView hi = (TextView)weatherView.findViewById(R.id.hi);
+        final TextView low = (TextView)weatherView.findViewById(R.id.low);
+
 
 //            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 //            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 1, this);
 
 
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-
-                String temp;
-                temp = String.valueOf(weatherFetcher.getTemp());
-                Log.d("current temp:", String.valueOf(temp));
-                degrees.setText(temp + "°");
-
-                String city = weatherFetcher.getCity();
-                Log.v("post city", city);
-                cityView.setText(city);
-
-                String desc = weatherFetcher.getDescription();
-                Log.d("description is: ", desc);
-                weatherString.setText(desc);
-            }
-        };
-        new Handler().postDelayed(runnable, 3000);
-
 
         return weatherView;
     }
-
-
 
     @Override
     public void onLocationChanged(Location location) {

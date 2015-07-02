@@ -4,7 +4,10 @@ package com.jaellysbales.nowfeed;
  * Created by charlynbuchanan on 7/2/15.
  */
 
+import android.location.Location;
+import android.location.LocationListener;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -21,20 +24,46 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 
-public class WeatherFetcher {
+public class WeatherFetcher implements LocationListener{
     public WeatherFetcher() {
         new AsyncClass().execute();
     }
 
 
+    @Override
+    public void onLocationChanged(Location location) {
+        double latitude = location.getLatitude();
+        double longitude = location.getLongitude();
+        Log.d("lat" , String.valueOf(latitude));
+        Log.d("long" , String.valueOf(longitude));
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
+    }
+
     class AsyncClass extends AsyncTask<Void, Void, String> {
 
         @Override
         protected String doInBackground(Void... params) {
+
+
+
             Log.v("JSON", "doInBackground");
             String result = "";
 
-            String jsonUrl = "http://api.openweathermap.org/data/2.5/weather?zip=11429,us";
+            String jsonUrl = "http://api.openweathermap.org/data/2.5/weather?zip=11101,us";
             URL url = null;
             try {
                 url = new URL(jsonUrl);
@@ -78,6 +107,8 @@ public class WeatherFetcher {
             getCity();
             getMaxTemp();
             getMinTemp();
+            getId();
+            getWind();
         }
 
 
@@ -191,6 +222,54 @@ public class WeatherFetcher {
         }
         return minTemp;
     }
+
+    //Get id for appropriate icon to be displayed
+    public static int getId() {
+        String json = getJsonString();
+        int id = 0;
+
+        try{
+            JSONObject object = new JSONObject(json);
+            JSONArray weather = object.getJSONArray("weather");
+            JSONObject first = (JSONObject)weather.get(0);
+            id = first.getInt("id");
+//            if ((id >= 200) || (id <= 232) ){
+//            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return id;
+    }
+
+    //Get wind
+    public static double getWind() {
+        String json = getJsonString();
+        double windSpeed = 0.0;
+
+        try{
+            JSONObject object = new JSONObject(json);
+            JSONObject wind = object.getJSONObject("wind");
+            windSpeed = wind.getDouble("speed");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return windSpeed;
+    }
+
+//    //Get humidity
+//    public static int getHumidity() {
+//        String json = getJsonString();
+//        int humidity = 0;
+//
+//        try{
+//            JSONObject object = new JSONObject(json);
+//            JSONObject main = object.getJSONObject("main");
+//            humidity = main.getInt("humidity");
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//        return humidity;
+//    }
 }
 
 
