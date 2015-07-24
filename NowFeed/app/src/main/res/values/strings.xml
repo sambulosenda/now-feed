@@ -9,11 +9,11 @@
     <string name="demo_addr_home">3163 Broadway New York, NY 10027</string>
     <string name="demo_addr_work">31-00 47th Avenue #1105, Long Island City, NY 11101</string>
 
-    <string name="jb_maps_key"></string>
+    <string name="jb_maps_key">MAPS KEY HERE</string>
     <string name="project_maps_key"></string>
     <string name="maps_api_key">@string/jb_maps_key</string>
 
-    <string name="jb_directions_key"></string>
+    <string name="jb_directions_key">DIRECTIONS KEY HERE</string>
     <string name="project_directions_key"></string>
     <string name="directions_api_key">@string/jb_directions_key</string>
 
