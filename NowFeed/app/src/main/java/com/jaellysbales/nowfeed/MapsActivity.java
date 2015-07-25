@@ -65,6 +65,7 @@ public class MapsActivity extends FragmentActivity
     private GetRouteJsonData getRouteJsonData;
     private List<Route> routes;
 
+    //maps card
     private BroadcastReceiver mMapRouteMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -77,6 +78,7 @@ public class MapsActivity extends FragmentActivity
         }
     };
 
+    //maps card
     private OnMapReadyCallback onMapReadyCallback = new OnMapReadyCallback() {
         @Override
         public void onMapReady(GoogleMap googleMap) {
@@ -87,6 +89,7 @@ public class MapsActivity extends FragmentActivity
     };
 
 
+    //maps card
     private void drawRoutePolylines() {
         if (routes != null && googleMap != null) {
             Route chosenRoute = routes.get(0);
@@ -99,6 +102,8 @@ public class MapsActivity extends FragmentActivity
         }
     }
 
+
+    //maps card
     public void setEndLatLngAndMarker() {
         if (routes != null && googleMap != null) {
             endLatLng = routes.get(0).getEndPoint();
@@ -117,6 +122,7 @@ public class MapsActivity extends FragmentActivity
         }
     }
 
+    //maps card
     public void setTextViewsToJsonData() {
         if (routes != null) {
             tv_card_map_title_minutes.setText(routes.get(0).getDuration());
@@ -131,6 +137,7 @@ public class MapsActivity extends FragmentActivity
         }
     }
 
+    //maps card
     public void setMapCameraView() {
         if (routes != null) {
             LatLng northeastLatLng = new LatLng(routes.get(0).getBoundsNortheastLat(),
@@ -183,6 +190,7 @@ public class MapsActivity extends FragmentActivity
 
     }
 
+    //maps card
     public void initializeViews() {
         tv_card_map_title_minutes = (TextView) findViewById(R.id.tv_card_map_title_minutes);
         tv_card_map_title_destination = (TextView) findViewById(R.id.tv_card_map_title_destination);
@@ -191,6 +199,7 @@ public class MapsActivity extends FragmentActivity
     }
 
 
+    //maps card
     protected void setUpMapIfNeeded() {
         // Verify map has not already been instantiated.
         if (googleMap == null) {
@@ -201,6 +210,7 @@ public class MapsActivity extends FragmentActivity
         }
     }
 
+    //maps card
     @Override
     public void handleNewLocation(Location location) {
         // TODO: CLEAN THIS UP
@@ -221,6 +231,7 @@ public class MapsActivity extends FragmentActivity
         googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
 
+    //maps card
     private void getRouteData() {
         getTimeAndSetEndAddress();
 
@@ -241,6 +252,7 @@ public class MapsActivity extends FragmentActivity
         tv_card_map_directions.setOnClickListener(mapDirectionsListener);
     }
 
+    //maps card
     public void setPreferences(String prefAddressHome, String prefAddressWork) {
         sharedPreferences = this.getSharedPreferences(MAPS_PREFS,
                 Context.MODE_PRIVATE);
@@ -253,6 +265,7 @@ public class MapsActivity extends FragmentActivity
         addressWork = prefAddressWork;
     }
 
+    //maps card
     public void loadPreferences() {
         sharedPreferences = this.getSharedPreferences(MAPS_PREFS,
                 Context.MODE_PRIVATE);
@@ -272,6 +285,7 @@ public class MapsActivity extends FragmentActivity
         }
     }
 
+    //maps card
     public Dialog getPlacesDialog() {
         final View layout = View.inflate(this, R.layout.dialog_set_prefs, null);
         final EditText etAddressHome = (EditText) layout.findViewById(R.id.et_address_home);
@@ -303,7 +317,7 @@ public class MapsActivity extends FragmentActivity
         return builder.create();
     }
 
-
+    //maps card
     public void getTimeAndSetEndAddress() {
         Calendar c = Calendar.getInstance();
         int timeOfDay = c.get(Calendar.HOUR_OF_DAY);
@@ -348,7 +362,7 @@ public class MapsActivity extends FragmentActivity
         locationProvider.disconnect();
     }
 
-
+    //used for todocard
     public static void doneOnClick(View view) {
         View v = (View) view.getParent();
         TextView taskTextView = (TextView) v.findViewById(R.id.taskTextView);
