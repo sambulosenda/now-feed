@@ -13,12 +13,14 @@ import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -65,6 +67,7 @@ public class MapsActivity extends FragmentActivity
     private GetRouteJsonData getRouteJsonData;
     private List<Route> routes;
 
+    //maps card
     private BroadcastReceiver mMapRouteMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -77,6 +80,7 @@ public class MapsActivity extends FragmentActivity
         }
     };
 
+    //maps card
     private OnMapReadyCallback onMapReadyCallback = new OnMapReadyCallback() {
         @Override
         public void onMapReady(GoogleMap googleMap) {
@@ -87,6 +91,7 @@ public class MapsActivity extends FragmentActivity
     };
 
 
+    //maps card
     private void drawRoutePolylines() {
         if (routes != null && googleMap != null) {
             Route chosenRoute = routes.get(0);
@@ -99,6 +104,8 @@ public class MapsActivity extends FragmentActivity
         }
     }
 
+
+    //maps card
     public void setEndLatLngAndMarker() {
         if (routes != null && googleMap != null) {
             endLatLng = routes.get(0).getEndPoint();
@@ -117,6 +124,7 @@ public class MapsActivity extends FragmentActivity
         }
     }
 
+    //maps card
     public void setTextViewsToJsonData() {
         if (routes != null) {
             tv_card_map_title_minutes.setText(routes.get(0).getDuration());
@@ -131,6 +139,7 @@ public class MapsActivity extends FragmentActivity
         }
     }
 
+    //maps card
     public void setMapCameraView() {
         if (routes != null) {
             LatLng northeastLatLng = new LatLng(routes.get(0).getBoundsNortheastLat(),
@@ -180,9 +189,76 @@ public class MapsActivity extends FragmentActivity
         cardsLayout.addView(TodoCardTwo.createTodoTwoView(inflater));
         cardsLayout.addView(AlarmCard.createAlarmView(inflater));
         //cardsLayout.addView(TodoCard.createTodoView(inflater)); maybe call this a notepad feature,
+        cardsLayout.addView(WeatherCard.createWeatherView(inflater));
+
+        //Weather Stuff
+        final WeatherFetcher weatherFetcher = new WeatherFetcher();
+        final TextView weatherString = (TextView) findViewById(R.id.weatherString);
+        final TextView windData = (TextView) findViewById(R.id.windData);
+        final TextView humidityTv = (TextView) findViewById(R.id.humidity);
+        final TextView cityView = (TextView) findViewById(R.id.cityView);
+        final TextView degrees = (TextView) findViewById(R.id.degrees);
+        final ImageView weatherIcon = (ImageView) findViewById(R.id.weatherIcon);
+        final TextView low = (TextView)findViewById(R.id.low);
+
+//        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+//        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 1, this);
+
+
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+
+                String temp;
+                temp = String.valueOf(weatherFetcher.getTemp());
+                Log.d("current temp:", String.valueOf(temp));
+//                degrees.setText(temp + "°");
+                Log.d("temp: ", String.valueOf(temp));
+                degrees.setText("Foo");
+
+                String city = weatherFetcher.getCity();
+                Log.v("post city", city);
+                cityView.setText(city);
+
+                String desc = weatherFetcher.getDescription();
+                Log.d("description is: ", desc);
+                weatherString.setText(desc);
+
+                double maxTemp = weatherFetcher.getMaxTemp();
+                double minTemp = weatherFetcher.getMinTemp();
+                low.setText("Hi : " + (int)maxTemp +  "° \n\nLow :" + (int)minTemp + "°");
+
+                double wind = weatherFetcher.getWind();
+                windData.setText("Wind: " + String.valueOf(wind) + "mph");
+
+                int humidity = weatherFetcher.getHumidity();
+                humidityTv.setText("Humidity: " + String.valueOf(humidity) + "%");
+
+                int id;
+                id = weatherFetcher.getId();
+                if ((id >= 200) || (id <= 232)){
+                    weatherIcon.setBackgroundResource(R.drawable.thunderstorm);
+                }
+                if ((id >= 300) || (id <= 321)){
+                    weatherIcon.setBackgroundResource(R.drawable.lightrain);
+                }
+                if ((id >= 500) || (id <= 531)){
+                    weatherIcon.setBackgroundResource(R.drawable.moderaterain);
+                }
+                if ((id>=600) || (id <= 622)) {
+                    weatherIcon.setBackgroundResource(R.drawable.snow);
+                }
+                if ((id >= 701) || (id <= 781)){
+                    weatherIcon.setBackgroundResource(R.drawable.mist);
+                }
+            }
+        };
+        new Handler().postDelayed(runnable, 3000);
 
     }
 
+
+    //maps card
     public void initializeViews() {
         tv_card_map_title_minutes = (TextView) findViewById(R.id.tv_card_map_title_minutes);
         tv_card_map_title_destination = (TextView) findViewById(R.id.tv_card_map_title_destination);
@@ -191,6 +267,7 @@ public class MapsActivity extends FragmentActivity
     }
 
 
+    //maps card
     protected void setUpMapIfNeeded() {
         // Verify map has not already been instantiated.
         if (googleMap == null) {
@@ -201,6 +278,7 @@ public class MapsActivity extends FragmentActivity
         }
     }
 
+    //maps card
     @Override
     public void handleNewLocation(Location location) {
         // TODO: CLEAN THIS UP
@@ -221,6 +299,7 @@ public class MapsActivity extends FragmentActivity
         googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
 
+    //maps card
     private void getRouteData() {
         getTimeAndSetEndAddress();
 
@@ -241,6 +320,7 @@ public class MapsActivity extends FragmentActivity
         tv_card_map_directions.setOnClickListener(mapDirectionsListener);
     }
 
+    //maps card
     public void setPreferences(String prefAddressHome, String prefAddressWork) {
         sharedPreferences = this.getSharedPreferences(MAPS_PREFS,
                 Context.MODE_PRIVATE);
@@ -253,6 +333,7 @@ public class MapsActivity extends FragmentActivity
         addressWork = prefAddressWork;
     }
 
+    //maps card
     public void loadPreferences() {
         sharedPreferences = this.getSharedPreferences(MAPS_PREFS,
                 Context.MODE_PRIVATE);
@@ -272,6 +353,7 @@ public class MapsActivity extends FragmentActivity
         }
     }
 
+    //maps card
     public Dialog getPlacesDialog() {
         final View layout = View.inflate(this, R.layout.dialog_set_prefs, null);
         final EditText etAddressHome = (EditText) layout.findViewById(R.id.et_address_home);
@@ -303,7 +385,7 @@ public class MapsActivity extends FragmentActivity
         return builder.create();
     }
 
-
+    //maps card
     public void getTimeAndSetEndAddress() {
         Calendar c = Calendar.getInstance();
         int timeOfDay = c.get(Calendar.HOUR_OF_DAY);
@@ -332,6 +414,8 @@ public class MapsActivity extends FragmentActivity
         }
     };
 
+
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -348,7 +432,7 @@ public class MapsActivity extends FragmentActivity
         locationProvider.disconnect();
     }
 
-
+    //used for todocard
     public static void doneOnClick(View view) {
         View v = (View) view.getParent();
         TextView taskTextView = (TextView) v.findViewById(R.id.taskTextView);
