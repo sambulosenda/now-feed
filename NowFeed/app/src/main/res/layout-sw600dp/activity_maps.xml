@@ -19,13 +19,13 @@
         <LinearLayout
             android:id="@+id/cards_stored_linear_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="412dp"
             android:orientation="horizontal">
 
             <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/cv_maps"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_width="575dp"
+                android:layout_height="match_parent"
                 android:layout_gravity="center"
                 card_view:cardCornerRadius="2dp">
 

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.v7.widget.CardView
+xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:card_view="http://schemas.android.com/apk/res-auto"
+android:id="@+id/Card_View"
+android:layout_gravity="center"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+card_view:cardCornerRadius="1dp">
+
+<!--todo: fix layout UI  -->
+
+<LinearLayout
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="250dp">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_weight="3"
+                android:src="@drawable/clock"
+                android:layout_width="match_parent"
+                android:layout_height="0dp" />
+
+            <!--todo: create image button with clock to view alarms -->
+            <Button
+                android:id="@+id/view_alarms_button"
+                android:text="View Alarms"
+                android:textSize="20dp"
+                android:gravity="center"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/upcoming_title_tv"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:textSize="20dp"
+        android:text="Upcoming Alarm"
+        android:layout_width="match_parent"
+        android:layout_height="0dp" />
+
+    <!--displays upcoming alarm -->
+    <TextView
+        android:id="@+id/alarms_text_view"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:textSize="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="0dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/textView"
+            android:text="  Create Alarm"
+            android:textSize="25dp"
+            android:gravity="center"
+            android:layout_toLeftOf="@+id/create_alarm_btn"
+            android:layout_alignBottom="@+id/create_alarm_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <ImageButton
+            android:id="@+id/create_alarm_btn"
+            android:src="@android:drawable/ic_menu_add"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </RelativeLayout>
+
+</LinearLayout>
+
+</android.support.v7.widget.CardView>
