@@ -92,6 +92,101 @@
                             android:textSize="18sp" />
 
                     </RelativeLayout>
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentTop="@+id/weatherCard"
+                        android:id="@+id/WeatherCardLayout"
+                        android:background="@color/darkTeal">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="35dp"
+                            android:layout_alignParentTop="true"
+                            android:textSize="30sp"
+                            android:id="@+id/cityView"
+                            android:text="@string/placeholder"
+                            android:fontFamily="sans-serif-thin"
+                            android:textColor="@color/cream"/>
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_below="@+id/cityView"
+                            android:id="@+id/leftSegment">
+                            <ImageView
+                                android:layout_width="145dp"
+                                android:layout_height="147dp"
+                                android:id="@+id/weatherIcon"
+                                android:src="@drawable/clouds"
+                                android:contentDescription="@string/icon" />
+                            <!--android:layout_above="@+id/forecastField"-->
+                            <!--android:layout_alignParentLeft="@+id/forecastField"-->
+                            <TextView
+                                android:layout_width="145dp"
+                                android:layout_height="50dp"
+                                android:id="@+id/weatherString"
+                                android:textAlignment="center"
+                                android:textSize="20sp"
+                                android:text="@string/placeholder"
+                                android:fontFamily="sans-serif-thin"
+                                android:layout_weight="1"
+                                android:textColor="@color/cream"/>
+                            <TextView
+                                android:layout_width="145dp"
+                                android:layout_height="50dp"
+                                android:id="@+id/windData"
+                                android:layout_weight="1"
+                                android:textAlignment="center"
+                                android:textSize="20sp"
+                                android:text="@string/placeholder"
+                                android:fontFamily="sans-serif-thin"
+                                android:textColor="@color/cream"/>
+                            <TextView
+                                android:layout_width="145dp"
+                                android:layout_height="50dp"
+                                android:id="@+id/humidity"
+                                android:layout_weight="1"
+                                android:textAlignment="center"
+                                android:textSize="20sp"
+                                android:text="@string/placeholder"
+                                android:fontFamily="sans-serif-thin"
+                                android:textColor="@color/cream"/>
+                        </LinearLayout>
+
+                        <TextView
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            android:id="@+id/low"
+                            android:textAlignment="textEnd"
+                            android:text="@string/placeholder"
+                            android:fontFamily="sans-serif-thin"
+                            android:textSize="25sp"
+                            android:layout_marginRight="48dp"
+                            android:layout_marginEnd="48dp"
+                            android:gravity="center_horizontal"
+                            android:layout_alignParentBottom="true"
+                            android:layout_alignParentRight="true"
+                            android:layout_alignParentEnd="true"
+                            android:textColor="@color/cream"
+                            tools:ignore="RtlCompat" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceLarge"
+                            android:text="@string/placeholder"
+                            android:id="@+id/degrees"
+                            android:layout_alignTop="@+id/leftSegment"
+                            android:layout_alignParentRight="true"
+                            android:layout_alignParentEnd="true"
+                            android:layout_above="@+id/low"
+                            android:layout_toRightOf="@+id/leftSegment"
+                            android:layout_toEndOf="@+id/leftSegment"
+                            android:fontFamily="sans-serif-thin"
+                            android:textSize="100sp"
+                            android:textColor="@color/cream"
+                            />
+                    </RelativeLayout>
 
                 </LinearLayout>
 

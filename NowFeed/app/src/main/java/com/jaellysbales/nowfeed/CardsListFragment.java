@@ -14,12 +14,14 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -155,7 +157,72 @@ public class CardsListFragment extends Fragment implements LocationProvider.Loca
         View fragmentView =  inflater.inflate(R.layout.cards_list_fragment, container, false);
         locationProvider = new LocationProvider(getActivity(), this);
 
+        retrieveWeatherData(fragmentView);
+
         return fragmentView;
+    }
+
+    private void retrieveWeatherData(View fragmentView) {
+        //Weather Stuff
+        final TextView weatherString = (TextView) fragmentView.findViewById(R.id.weatherString);
+        final TextView windData = (TextView) fragmentView.findViewById(R.id.windData);
+        final TextView humidityTv = (TextView) fragmentView.findViewById(R.id.humidity);
+        final TextView cityView = (TextView) fragmentView.findViewById(R.id.cityView);
+        final TextView degrees = (TextView) fragmentView.findViewById(R.id.degrees);
+        final ImageView weatherIcon = (ImageView) fragmentView.findViewById(R.id.weatherIcon);
+        final TextView low = (TextView)fragmentView.findViewById(R.id.low);
+
+        final WeatherFetcher weatherFetcher = new WeatherFetcher();
+
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+
+                String temp;
+                temp = String.valueOf(weatherFetcher.getTemp());
+                Log.d("current temp:", String.valueOf(temp));
+//                degrees.setText(temp + "°");
+                Log.d("temp: ", String.valueOf(temp));
+                degrees.setText("Foo");
+
+                String city = weatherFetcher.getCity();
+                Log.v("post city", city);
+                cityView.setText(city);
+
+                String desc = weatherFetcher.getDescription();
+                Log.d("description is: ", desc);
+                weatherString.setText(desc);
+
+                double maxTemp = weatherFetcher.getMaxTemp();
+                double minTemp = weatherFetcher.getMinTemp();
+                low.setText("Hi : " + (int)maxTemp +  "° \n\nLow :" + (int)minTemp + "°");
+
+                double wind = weatherFetcher.getWind();
+                windData.setText("Wind: " + String.valueOf(wind) + "mph");
+
+                int humidity = weatherFetcher.getHumidity();
+                humidityTv.setText("Humidity: " + String.valueOf(humidity) + "%");
+
+                int id;
+                id = weatherFetcher.getId();
+                if ((id >= 200) || (id <= 232)){
+                    weatherIcon.setBackgroundResource(R.drawable.thunderstorm);
+                }
+                if ((id >= 300) || (id <= 321)){
+                    weatherIcon.setBackgroundResource(R.drawable.lightrain);
+                }
+                if ((id >= 500) || (id <= 531)){
+                    weatherIcon.setBackgroundResource(R.drawable.moderaterain);
+                }
+                if ((id>=600) || (id <= 622)) {
+                    weatherIcon.setBackgroundResource(R.drawable.snow);
+                }
+                if ((id >= 701) || (id <= 781)){
+                    weatherIcon.setBackgroundResource(R.drawable.mist);
+                }
+            }
+        };
+        new Handler().postDelayed(runnable, 3000);
     }
 
     @Override

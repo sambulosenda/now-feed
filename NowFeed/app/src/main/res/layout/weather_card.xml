@@ -69,21 +69,6 @@
                 android:fontFamily="sans-serif-thin"
                 android:textColor="@color/cream"/>
         </LinearLayout>
-        <!--<TextView-->
-            <!--android:layout_width="100dp"-->
-            <!--android:layout_height="150dp"-->
-            <!--android:layout_alignParentRight="true"-->
-            <!--android:layout_below="@+id/cityView"-->
-            <!--android:textAlignment="viewStart"-->
-            <!--android:text="@string/placeholder"-->
-            <!--android:id="@+id/degrees"-->
-            <!--android:textSize="100sp"-->
-            <!--android:layout_toRightOf="@+id/leftSegment"-->
-            <!--android:layout_toEndOf="@+id/leftSegment"-->
-            <!--android:fontFamily="sans-serif-thin"-->
-            <!--android:layout_above="@+id/low"-->
-            <!--android:layout_alignParentEnd="true"-->
-            <!--android:layout_alignRight="@+id/cityView" />-->
 
         <TextView
             android:layout_width="100dp"
