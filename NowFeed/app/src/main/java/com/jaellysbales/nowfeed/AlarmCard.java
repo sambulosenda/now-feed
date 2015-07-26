@@ -102,7 +102,12 @@ public class AlarmCard {
         if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             /** use getNextAlarmClock() **/
             AlarmManager am = (AlarmManager) alarmView.getContext().getSystemService(Context.ALARM_SERVICE);
-            nextAlarm = am.getNextAlarmClock().toString();
+
+            if(am.getNextAlarmClock() != null) {
+                nextAlarm = am.getNextAlarmClock().toString();
+            }else {
+                nextAlarm = "no alarms active";
+            }
         } else {
             /** use Settings.System.NEXT_ALARM_FORMATTED **/
             nextAlarm = Settings.System.getString(alarmView.getContext().getContentResolver(),
