@@ -4,13 +4,13 @@
     android:id="@+id/Card_View"
     android:layout_gravity="center"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    card_view:cardCornerRadius="1dp">
+    android:layout_height="match_parent"
+    card_view:cardCornerRadius="2dp">
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="250dp">
+        android:layout_height="match_parent">
 
         <!-- title and button to add task -->
     <RelativeLayout
@@ -20,7 +20,7 @@
     <TextView
         android:id="@+id/title_tv"
         android:text="To Do List"
-        android:textSize="20dp"
+        android:textSize="30dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"

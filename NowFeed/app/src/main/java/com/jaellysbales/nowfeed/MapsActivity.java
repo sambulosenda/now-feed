@@ -2,6 +2,7 @@ package com.jaellysbales.nowfeed;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -34,10 +35,10 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.jaellysbales.nowfeed.db.TaskContract;
-import com.jaellysbales.nowfeed.db.TaskDBHelper;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.jaellysbales.nowfeed.db.TaskContract;
+import com.jaellysbales.nowfeed.db.TaskDBHelper;
 
 import java.util.Calendar;
 import java.util.List;
@@ -186,7 +187,7 @@ public class MapsActivity extends FragmentActivity
         //populating other views into linearlayout
         LinearLayout cardsLayout = (LinearLayout) findViewById(R.id.cards_stored_linear_layout);
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        cardsLayout.addView(TodoCardTwo.createTodoTwoView(inflater));
+        //cardsLayout.addView(TodoCardTwo.createTodoTwoView(inflater));
         cardsLayout.addView(AlarmCard.createAlarmView(inflater));
         //cardsLayout.addView(TodoCard.createTodoView(inflater)); maybe call this a notepad feature,
         cardsLayout.addView(WeatherCard.createWeatherView(inflater));
@@ -415,7 +416,6 @@ public class MapsActivity extends FragmentActivity
     };
 
 
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -430,6 +430,13 @@ public class MapsActivity extends FragmentActivity
     protected void onPause() {
         super.onPause();
         locationProvider.disconnect();
+    }
+
+    public void mapsViewOnClick(View view) {
+        // Begin the transaction
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.replace(R.id.placeholder_frame_layout, new DetailViewFragment());
+        ft.commit();
     }
 
     //used for todocard
@@ -448,5 +455,19 @@ public class MapsActivity extends FragmentActivity
         sqlDB.execSQL(sql);
         TodoCardTwo.updateUI();
     }
+
+    public void alarmViewOnClick (View view) {
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.replace(R.id.placeholder_frame_layout, new DetailViewFragment());
+        ft.commit();
+    }
+
+    public void weatherViewOnClick (View view) {
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.replace(R.id.placeholder_frame_layout, new DetailViewFragment());
+        ft.commit();
+    }
+
+
 
 }

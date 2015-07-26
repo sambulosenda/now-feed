@@ -117,4 +117,7 @@ public class AlarmCard {
         alarmsTextView.setText(nextAlarm);
     }
 
+
+
+
 }
