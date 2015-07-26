@@ -63,6 +63,7 @@ public class CardsListFragment extends Fragment implements LocationProvider.Loca
     private String endAddress;
     private GetRouteJsonData getRouteJsonData;
     private List<Route> routes;
+    private AlarmCard alarmCard;
 
     //maps card
     private BroadcastReceiver mMapRouteMessageReceiver = new BroadcastReceiver() {
@@ -158,6 +159,8 @@ public class CardsListFragment extends Fragment implements LocationProvider.Loca
         locationProvider = new LocationProvider(getActivity(), this);
 
         retrieveWeatherData(fragmentView);
+        alarmCard = new AlarmCard();
+        alarmCard.setupAlarmView(fragmentView);
 
         return fragmentView;
     }
@@ -224,6 +227,9 @@ public class CardsListFragment extends Fragment implements LocationProvider.Loca
         };
         new Handler().postDelayed(runnable, 3000);
     }
+
+
+
 
     @Override
     public void onResume() {

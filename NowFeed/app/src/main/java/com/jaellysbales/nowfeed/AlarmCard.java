@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.provider.AlarmClock;
 import android.provider.Settings;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -19,17 +18,14 @@ import android.widget.TimePicker;
  */
 public class AlarmCard {
 
-    private static View alarmView;
-    private static int hour;
-    private static int minutes;
-    private static TimePicker timePicker;
+    private  View alarmView;
+    private  int hour;
+    private  int minutes;
+    private  TimePicker timePicker;
 
-    public AlarmCard(View alarmView){
-        this.alarmView = alarmView;
-    }
 
-    public static View createAlarmView(LayoutInflater inflater){
-        alarmView = inflater.inflate(R.layout.alarm_card, null);
+    public  View setupAlarmView(View fragmentView){
+        alarmView = fragmentView.findViewById(R.id.alarm_card_view);
 
         ImageButton btnCreate = (ImageButton) alarmView.findViewById(R.id.create_alarm_btn);
         btnCreate.setOnClickListener(createAlarmListener);
@@ -42,7 +38,7 @@ public class AlarmCard {
         return alarmView;
     }
 
-    public static View.OnClickListener createAlarmListener = new View.OnClickListener() {
+    public  View.OnClickListener createAlarmListener = new View.OnClickListener() {
         @Override
         public void onClick(final View view) {
             AlertDialog.Builder builder = new AlertDialog.Builder(alarmView.getContext());
@@ -73,7 +69,7 @@ public class AlarmCard {
         }
     };
 
-    public static void createAlarm(Context context, String message, int hour, int minutes) {
+    public  void createAlarm(Context context, String message, int hour, int minutes) {
         Intent createAlarmIntent = new Intent(AlarmClock.ACTION_SET_ALARM)
                 .putExtra(AlarmClock.EXTRA_MESSAGE, message)
                 .putExtra(AlarmClock.EXTRA_HOUR, hour)
@@ -83,7 +79,7 @@ public class AlarmCard {
         }
     }
 
-    public static  View.OnClickListener ViewOnClickListener = new View.OnClickListener() {
+    public   View.OnClickListener ViewOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
 
@@ -94,7 +90,7 @@ public class AlarmCard {
         }
     };
 
-    public static void showNextAlarm(){
+    public  void showNextAlarm(){
         // this will show next upcoming active alarm
         String nextAlarm;
         TextView alarmsTextView = (TextView) alarmView.findViewById(R.id.alarms_text_view);
