@@ -190,6 +190,7 @@
 
                     <include layout="@layout/alarm_card"/>
                     <include layout="@layout/todo_card"/>
+                    <include layout="@layout/todo_card_two"/>
                 </LinearLayout>
 
             </android.support.v7.widget.CardView>

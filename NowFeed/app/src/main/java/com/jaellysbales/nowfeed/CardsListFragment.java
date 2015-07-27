@@ -68,6 +68,7 @@ public class CardsListFragment extends Fragment implements LocationProvider.Loca
     private List<Route> routes;
     private AlarmCard alarmCard;
     private TodoCard todoCard;
+    private TodoCardTwo todoCardTwo;
 
     //maps card
     private BroadcastReceiver mMapRouteMessageReceiver = new BroadcastReceiver() {
@@ -169,6 +170,10 @@ public class CardsListFragment extends Fragment implements LocationProvider.Loca
         todoCard = new TodoCard(fragmentView);
         todoCard.createTodoView(fragmentView);
 
+        todoCardTwo = new TodoCardTwo(fragmentView);
+        todoCardTwo.createTodoTwoView(fragmentView);
+
+
         return fragmentView;
     }
 
@@ -191,9 +196,9 @@ public class CardsListFragment extends Fragment implements LocationProvider.Loca
                 String temp;
                 temp = String.valueOf(weatherFetcher.getTemp());
                 Log.d("current temp:", String.valueOf(temp));
-//                degrees.setText(temp + "°");
+                degrees.setText(temp + "°");
                 Log.d("temp: ", String.valueOf(temp));
-                degrees.setText("Foo");
+//                degrees.setText("Foo");
 
                 String city = weatherFetcher.getCity();
                 Log.v("post city", city);
@@ -234,9 +239,6 @@ public class CardsListFragment extends Fragment implements LocationProvider.Loca
         };
         new Handler().postDelayed(runnable, 3000);
     }
-
-
-
 
     @Override
     public void onResume() {

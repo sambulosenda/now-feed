@@ -25,9 +25,7 @@ public class TodoCard {
     }
 
     public static View createTodoView (View fragmentView ){
-        todoView = fragmentView.findViewById(R.id.Card_View);
-//        todoView = inflater.inflate(R.layout.todo_card, null);
-        //        alarmView = fragmentView.findViewById(R.id.alarm_card_view);
+        todoView = fragmentView.findViewById(R.id.todoCardView);
 
 
         txtEditor=(EditText) todoView.findViewById(R.id.textBox_editText);

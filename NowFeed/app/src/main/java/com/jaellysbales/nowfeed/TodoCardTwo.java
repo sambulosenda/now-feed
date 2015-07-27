@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
@@ -34,14 +33,13 @@ public class TodoCardTwo {
         this.todoViewTwo = todoViewTwo;
     }
 
-    public static View createTodoTwoView (LayoutInflater inflater){
-        todoViewTwo = inflater.inflate(R.layout.todo_card_two, null);
-
-        listView = (ListView) todoViewTwo.findViewById(android.R.id.list);
+    public static View createTodoTwoView ( View fragmentView){
+        todoViewTwo = fragmentView.findViewById(R.id.todoCardView);
+        listView = (ListView) fragmentView.findViewById(android.R.id.list);
         listView.setOnTouchListener(listViewListener);
 
         updateUI();
-        addItemBtn = (ImageButton) todoViewTwo.findViewById(R.id.add_item_btn);
+        addItemBtn = (ImageButton) fragmentView.findViewById(R.id.add_item_btn);
         addItemBtn.setOnClickListener(addItemlistener);
 
         return todoViewTwo;
