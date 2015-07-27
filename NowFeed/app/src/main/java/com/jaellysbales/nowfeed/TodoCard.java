@@ -1,6 +1,5 @@
 package com.jaellysbales.nowfeed;
 
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,8 +24,11 @@ public class TodoCard {
         this.todoView = todoView;
     }
 
-    public static View createTodoView (LayoutInflater inflater){
-        todoView = inflater.inflate(R.layout.todo_card, null);
+    public static View createTodoView (View fragmentView ){
+        todoView = fragmentView.findViewById(R.id.Card_View);
+//        todoView = inflater.inflate(R.layout.todo_card, null);
+        //        alarmView = fragmentView.findViewById(R.id.alarm_card_view);
+
 
         txtEditor=(EditText) todoView.findViewById(R.id.textBox_editText);
 
@@ -75,8 +77,4 @@ public class TodoCard {
             Toast.makeText(todoView.getContext(), "Exception: " + t.toString(), Toast.LENGTH_LONG).show();
         }
     }
-
-
-
-
 }

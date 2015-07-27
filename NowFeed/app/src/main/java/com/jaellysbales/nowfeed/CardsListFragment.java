@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
@@ -36,6 +37,8 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.jaellysbales.nowfeed.db.TaskContract;
+import com.jaellysbales.nowfeed.db.TaskDBHelper;
 
 import java.util.Calendar;
 import java.util.List;
@@ -64,6 +67,7 @@ public class CardsListFragment extends Fragment implements LocationProvider.Loca
     private GetRouteJsonData getRouteJsonData;
     private List<Route> routes;
     private AlarmCard alarmCard;
+    private TodoCard todoCard;
 
     //maps card
     private BroadcastReceiver mMapRouteMessageReceiver = new BroadcastReceiver() {
@@ -161,6 +165,9 @@ public class CardsListFragment extends Fragment implements LocationProvider.Loca
         retrieveWeatherData(fragmentView);
         alarmCard = new AlarmCard();
         alarmCard.setupAlarmView(fragmentView);
+
+        todoCard = new TodoCard(fragmentView);
+        todoCard.createTodoView(fragmentView);
 
         return fragmentView;
     }
@@ -378,5 +385,20 @@ public class CardsListFragment extends Fragment implements LocationProvider.Loca
         builder.setView(layout);
         return builder.create();
 
+    }
+    public static void doneOnClick(View view) {
+        View v = (View) view.getParent();
+        TextView taskTextView = (TextView) v.findViewById(R.id.taskTextView);
+        String task = taskTextView.getText().toString();
+
+        String sql = String.format("DELETE FROM %s WHERE %s = '%s'",
+                TaskContract.TABLE,
+                TaskContract.Columns.TASK,
+                task);
+
+        TodoCardTwo.helper = new TaskDBHelper(TodoCardTwo.todoViewTwo.getContext());
+        SQLiteDatabase sqlDB = TodoCardTwo.helper.getWritableDatabase();
+        sqlDB.execSQL(sql);
+        TodoCardTwo.updateUI();
     }
 }
